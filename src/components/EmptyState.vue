@@ -19,7 +19,6 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue'
 import IconPlus from '../components/icons/IconPlus.vue'
 
 defineProps<{ message: string }>()

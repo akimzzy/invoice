@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, toRaw, defineProps, defineEmits } from 'vue'
+import { ref, toRaw } from 'vue'
 import IconTrash from './icons/IconTrash.vue'
 import IconPerson from './icons/IconPerson.vue'
 import IconX from './icons/IconX.vue'

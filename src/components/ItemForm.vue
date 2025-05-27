@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineProps, defineEmits } from 'vue'
+import { ref } from 'vue'
 import IconMinus from './icons/IconMinus.vue'
 import IconPlus from './icons/IconPlus.vue'
 import type { InvoiceItem } from '@/db'

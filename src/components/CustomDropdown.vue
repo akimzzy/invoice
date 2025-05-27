@@ -49,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, useTemplateRef, computed, defineProps, defineEmits, nextTick, watch } from 'vue'
+import { ref, useTemplateRef, computed, nextTick, watch } from 'vue'
 import { onClickOutside } from '@vueuse/core'
 
 const props = defineProps({

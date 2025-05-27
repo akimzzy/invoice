@@ -11,6 +11,7 @@ import { fetchAllInvoices } from '@/db/invoiceActions'
 import CustomDropdown from '../components/CustomDropdown.vue'
 import InvoiceModal from '../components/InvoiceModal.vue'
 import IconPlus from '../components/icons/IconPlus.vue'
+import EmptyState from '../components/EmptyState.vue'
 
 async function addInvoice() {
   const response = await db.invoices.add({
@@ -113,8 +114,6 @@ watch(route, (newRoute) => {
     selectedInvoiceId.value = null
   }
 })
-
-
 </script>
 
 <template>
@@ -142,49 +141,69 @@ watch(route, (newRoute) => {
           </button>
         </div>
       </div>
-      
+
       <div v-if="activeTab === 'invoices'" class="">
-        <div class="flex mb-4 justify-between">
+        <div class="flex mb-8 justify-between" v-if="filteredInvoices.length > 0">
           <div>
-            <CustomDropdown
+            <!-- <CustomDropdown
               class="w-48"
               :options="[
                 { label: 'All Clients', value: 'all' },
                 ...(clients?.map((c) => ({ label: c.name, value: c.id })) ?? []),
               ]"
               v-model="clientFilter"
-            />
+            /> -->
           </div>
 
           <button
             @click="addInvoice"
-            class="px-4 py-2 rounded-lg focus:outline-none text-xs cursor-pointer flex gap-2 bg-white text-black items-center"
+            class="px-4 py-2 rounded-lg focus:outline-none text-xs cursor-pointer flex gap-2 bg-white/15 *: text-white border border-white/10 items-center"
           >
             <IconPlus class="size-3" /> New Invoice
           </button>
         </div>
-        <ul class="grid grid-cols-3 gap-4">
+        <EmptyState
+          v-if="filteredInvoices.length === 0"
+          message="No invoices yet."
+          @add="addInvoice"
+        >
+          <template #button>
+            <button
+              @click="addInvoice"
+              class="px-4 py-2 rounded-lg focus:outline-none text-xs cursor-pointer flex gap-2 bg-white/15 *: text-white border border-white/10 items-center hover:bg-white/20"
+            >
+              <IconPlus class="size-3" />
+              Add Invoice
+            </button>
+          </template>
+        </EmptyState>
+        <ul v-else class="grid grid-cols-3 gap-6">
           <li
-            class="rounded-2xl p-4 flex flex-col gap-2 bg-white/10 shadow-lg h-56 justify-between cursor-pointer"
+            class="rounded-4xl overflow-hidden flex flex-col bg-white/15 shadow-lg h-56 justify-between cursor-pointer"
             v-for="invoice in filteredInvoices"
             :key="invoice.id"
             @click="openInvoiceModal(invoice.id)"
           >
-            <div class="flex flex-col mb-2">
-              <span v-if="invoice.issueDate" class="text-xs text-white/30 mb-4 text-right">
-                {{ formatDate(invoice.issueDate, 'EEE, dd MMM yyyy | HH:mm') }}</span
-              >
-              <div class="flex flex-col gap-1">
-                <span class="text-xs text-white">Invoice #{{ invoice.id }} </span>
+            <div class="flex flex-col flex-1 bg-black/60 rounded-b-4xl">
+              <div class="flex justify-between p-4 border-b border-white/10 text-[10px]">
+                <span v-if="invoice.issueDate" class="text-white/30 text-center">
+                  {{ formatDate(invoice.issueDate, 'EEE, dd MMM yyyy') }}</span
+                >
+                <span class="text-white/30 text-center">
+                  {{
+                    clients?.find((c) => c.id === invoice.clientId)?.name || 'unknown client'
+                  }}</span
+                >
+              </div>
+              <div class="flex flex-col gap-1 items-center flex-1 justify-center">
+                <span class="text-sm text-white font-bold">Invoice #{{ invoice.id }} </span>
+
                 <span class="text-xs text-white/30">{{ invoice.items.length }} items</span>
               </div>
             </div>
-            <div class="flex justify-between items-center flex-col">
+            <div class="flex justify-between items-center flex-col py-2.5">
               <div class="flex items-center flex-col gap-2">
                 <div class="text-sm text-white">₦{{ invoice.total.toLocaleString() }}</div>
-                <div class="text-xs font-normal text-white/30">
-                  {{ clients?.find((c) => c.id === invoice.clientId)?.name || 'Unknown Client' }}
-                </div>
               </div>
             </div>
           </li>
@@ -192,14 +211,30 @@ watch(route, (newRoute) => {
       </div>
 
       <div v-if="activeTab === 'clients'">
-        <div class="mb-4 flex justify-end">
+        <div class="mb-4 flex justify-end" v-if="filteredClients.length > 0">
           <input
             v-model="clientSearch"
             placeholder="Search clients..."
             class="rounded-xl px-3 py-3 text-xs bg-white/20 text-white w-full outline-none border-none"
           />
         </div>
-        <div>
+        <EmptyState
+          v-if="filteredClients.length === 0"
+          message="No clients yet."
+          @add="$emit ? $emit('addClient') : null"
+        >
+          <template #button>
+            <button
+              @click="$emit ? $emit('addClient') : null"
+              class="px-4 py-2 rounded-lg focus:outline-none text-xs cursor-pointer flex gap-2 bg-white/15 *: text-white border border-white/10 items-center hover:bg-white/20"
+            >
+              <IconPlus class="size-3" />
+
+              Add Client
+            </button>
+          </template>
+        </EmptyState>
+        <div v-else>
           <ul class="flex flex-col gap-y-4">
             <li
               class="bg-white/10 rounded-2xl flex justify-between py-5 px-6 cursor-pointer"

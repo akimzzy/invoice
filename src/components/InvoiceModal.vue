@@ -5,6 +5,7 @@ import IconPerson from './icons/IconPerson.vue'
 import IconX from './icons/IconX.vue'
 import CustomCheckbox from './CustomCheckbox.vue'
 import CustomDropdown from './CustomDropdown.vue'
+import ConfirmDeleteModal from './ConfirmDeleteModal.vue'
 import ItemForm from './ItemForm.vue'
 import { formatDate } from 'date-fns'
 
@@ -89,73 +90,74 @@ async function handleDeleteInvoice() {
     @click.self="() => emit('close')"
   >
     <div
-      class="rounded-3xl rounded-t-none bg-[#18181b] shadow-2xl w-2xl h-[50rem] max-w-full p-6 flex flex-col relative"
+      class="rounded-3xl bg-[#18181b] shadow-2xl w-2xl h-[50rem] max-w-full mt-6 flex flex-col relative border border-white/10"
     >
       <div
-        class="text-xs text-white/40 absolute h-10 left-0 -top-10 rounded-t-3xl p-6 bg-[#18181b] flex place-items-center"
+        class="text-[10px] rounded-t-3xl text-white/30 border-b border-b-white/10 w-full p-6 bg-[#18181b] flex items-center justify-between"
       >
         {{ formatDate(props.invoice?.issueDate, 'EEE, dd MMM yyyy | HH:mm') }}
-      </div>
-
-      <button
-        class="text-xs text-white cursor-pointer hover:text-white/50 absolute h-10 right-0 -top-10 rounded-t-3xl p-6 bg-[#18181b] flex place-items-center"
-        @click="() => emit('close')"
-      >
-        <IconX class="size-4" />
-      </button>
-
-      <div class="text-lg font-semibold text-white mb-6">Invoice #{{ props.invoice?.id }}</div>
-      <div class="mb-2 flex-1">
-        <div class="flex items-center justify-between mb-1">
-          <div class="text-xs text-white/70">Items</div>
-          <button
-            class="text-xs px-2 py-1 rounded disabled:opacity-20 disabled:cursor-not-allowed"
-            :disabled="!markedItems.length"
-            @click="deleteMarkedItems"
-            type="button"
-          >
-            <IconTrash class="size-4 text-white" />
-          </button>
-        </div>
-        <ul class="flex flex-col divide-y mt-4 divide-white/10">
-          <li
-            v-for="(item, idx) in props.invoice?.items"
-            :key="item.description + idx"
-            class="flex text-xs text-white/90 items-center gap-2 relative group"
-            @mouseenter="editingIdx = idx"
-            @mouseleave="editingIdx = null"
-          >
-            <CustomCheckbox
-              :model-value="markedItems.includes(idx)"
-              @update:model-value="(checked) => handleCheckbox(checked, idx)"
-              :disabled="!props.invoice"
-            />
-            <div class="flex flex-col flex-1 justify-center">
-              <ItemForm
-                :key="idx"
-                :item="item"
-                :hovered="editingIdx === idx"
-                @update:item="(val) => handleItemUpdate(val, idx)"
-              />
-            </div>
-          </li>
-        </ul>
         <button
-          class="text-xs p-3 bg- text-white/70 rounded-xl cursor-pointer mt-4 w-full"
-          type="button"
-          @click="addInvoiceItem"
-          v-if="props.invoice"
+          class="text-xs text-white cursor-pointer hover:text-white/50 bg-[#18181b] flex place-items-center"
+          @click="() => emit('close')"
         >
-          + Add Item
+          <IconX class="size-4" />
         </button>
       </div>
-      <div class="flex justify-between items-center mt-2 mb-2">
-        <span class="text-xs text-white/70">Total</span>
-        <span class="text-lg font-bold text-white"
-          >₦{{ props.invoice?.total?.toLocaleString() }}</span
-        >
+
+      <div class="p-6 flex-1 flex flex-col">
+        <div class="text-lg font-semibold text-white mb-6">Invoice #{{ props.invoice?.id }}</div>
+        <div class="mb-2 flex-1">
+          <div class="flex items-center justify-between">
+            <div class="text-xs text-white/70">Items</div>
+            <button
+              class="text-xs px-2 py-1 rounded disabled:opacity-20 disabled:cursor-not-allowed"
+              :disabled="!markedItems.length"
+              @click="deleteMarkedItems"
+              type="button"
+            >
+              <IconTrash class="size-4 text-white" />
+            </button>
+          </div>
+          <ul class="flex flex-col divide-y mt-4 divide-white/10">
+            <li
+              v-for="(item, idx) in props.invoice?.items"
+              :key="item.description + idx"
+              class="flex text-xs text-white/90 items-center gap-2 relative group"
+              @mouseenter="editingIdx = idx"
+              @mouseleave="editingIdx = null"
+            >
+              <CustomCheckbox
+                :model-value="markedItems.includes(idx)"
+                @update:model-value="(checked) => handleCheckbox(checked, idx)"
+                :disabled="!props.invoice"
+              />
+              <div class="flex flex-col flex-1 justify-center">
+                <ItemForm
+                  :key="idx"
+                  :item="item"
+                  :hovered="editingIdx === idx"
+                  @update:item="(val) => handleItemUpdate(val, idx)"
+                />
+              </div>
+            </li>
+          </ul>
+          <button
+            class="text-xs p-3 bg- text-white/70 rounded-xl cursor-pointer mt-4 w-full"
+            type="button"
+            @click="addInvoiceItem"
+            v-if="props.invoice"
+          >
+            + Add Item
+          </button>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-xs text-white/70">Total</span>
+          <span class="text-lg font-bold text-white"
+            >₦{{ props.invoice?.total?.toLocaleString() }}</span
+          >
+        </div>
       </div>
-      <div class="flex gap-2 mt-2 justify-between border-t pt-6 items-center border-white/10">
+      <div class="flex gap-2 p-6 justify-between border-t items-center border-white/10">
         <div class="flex gap-2 items-center">
           <IconPerson class="size-4" />
           <CustomDropdown
@@ -169,7 +171,8 @@ async function handleDeleteInvoice() {
                 updateInvoice(props.invoice.id, { clientId: val === undefined ? undefined : val })
             "
             class="min-w-32"
-          />
+          >
+          </CustomDropdown>
         </div>
 
         <div>
@@ -198,12 +201,11 @@ async function handleDeleteInvoice() {
             >
               Cancel
             </button>
-            <button
-              class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700"
-              @click="handleDeleteInvoice"
-            >
-              Delete
-            </button>
+            <ConfirmDeleteModal
+              :visible="showDeleteConfirm"
+              @confirm="handleDeleteInvoice"
+              @cancel="showDeleteConfirm = false"
+            />
           </div>
         </div>
       </div>

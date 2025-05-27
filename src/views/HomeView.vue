@@ -3,12 +3,11 @@ import { ref, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { formatDate } from 'date-fns'
 import { liveQuery } from 'dexie'
-import { useObservable } from '@vueuse/rxjs'
+import { useObservable, from } from '@vueuse/rxjs'
 
 import { db } from '@/db'
 import type { Invoice, Client } from '@/db'
 import { fetchAllInvoices } from '@/db/invoiceActions'
-import CustomDropdown from '../components/CustomDropdown.vue'
 import InvoiceModal from '../components/InvoiceModal.vue'
 import IconPlus from '../components/icons/IconPlus.vue'
 import EmptyState from '../components/EmptyState.vue'
@@ -33,9 +32,9 @@ const clientFilter = ref<number | 'all'>(route.query.client ? Number(route.query
 const clientSearch = ref('')
 
 watch([activeTab, clientFilter], ([tab, client]) => {
-  const query: any = { ...route.query, tab }
+  const query: Record<string, string | undefined> = { ...route.query, tab }
   if (tab === 'invoices') {
-    query.client = client !== 'all' ? client : undefined
+    query.client = client !== 'all' ? String(client) : undefined
   } else {
     delete query.client
   }
@@ -56,8 +55,8 @@ watch(route, (newRoute) => {
   }
 })
 
-const invoices = useObservable<Invoice[]>(liveQuery(() => fetchAllInvoices()))
-const clients = useObservable<Client[]>(liveQuery(() => db.clients.toArray()))
+const invoices = useObservable<Invoice[]>(from(liveQuery(() => fetchAllInvoices())))
+const clients = useObservable<Client[]>(from(liveQuery(() => db.clients.toArray())))
 
 const filteredInvoices = computed(() => {
   const items = invoices.value || []

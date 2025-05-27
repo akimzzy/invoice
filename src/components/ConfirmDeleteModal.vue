@@ -27,6 +27,6 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{ visible: boolean }>()
-const emit = defineEmits(['confirm', 'cancel'])
+defineProps<{ visible: boolean }>()
+ defineEmits(['confirm', 'cancel'])
 </script>

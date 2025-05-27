@@ -86,14 +86,14 @@ async function handleDeleteInvoice() {
 
 <template>
   <div
-    class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-2 sm:px-0"
     @click.self="() => emit('close')"
   >
     <div
-      class="rounded-3xl bg-[#18181b] shadow-2xl w-2xl h-[50rem] max-w-full mt-6 flex flex-col relative border border-white/10"
+      class="rounded-3xl bg-[#18181b] shadow-2xl w-full max-w-2xl h-full max-h-[95vh] mt-6 flex flex-col relative border border-white/10 sm:w-2xl sm:h-[50rem] sm:max-h-[90vh]"
     >
       <div
-        class="text-[10px] rounded-t-3xl text-white/30 border-b border-b-white/10 w-full p-6 bg-[#18181b] flex items-center justify-between"
+        class="text-[10px] rounded-t-3xl text-white/30 border-b border-b-white/10 w-full p-4 sm:p-6 bg-[#18181b] flex items-center justify-between"
       >
         {{ formatDate(props.invoice?.issueDate, 'EEE, dd MMM yyyy | HH:mm') }}
         <button
@@ -104,8 +104,10 @@ async function handleDeleteInvoice() {
         </button>
       </div>
 
-      <div class="p-6 flex-1 flex flex-col">
-        <div class="text-lg font-semibold text-white mb-6">Invoice #{{ props.invoice?.id }}</div>
+      <div class="p-4 sm:p-6 flex-1 flex flex-col overflow-y-auto">
+        <div class="text-lg font-semibold text-white mb-4 sm:mb-6">
+          Invoice #{{ props.invoice?.id }}
+        </div>
         <div class="mb-2 flex-1">
           <div class="flex items-center justify-between">
             <div class="text-xs text-white/70">Items</div>
@@ -118,11 +120,11 @@ async function handleDeleteInvoice() {
               <IconTrash class="size-4 text-white" />
             </button>
           </div>
-          <ul class="flex flex-col divide-y mt-4 divide-white/10">
+          <ul class="flex flex-col divide-y mt-2 sm:mt-4 divide-white/10">
             <li
               v-for="(item, idx) in props.invoice?.items"
               :key="item.description + idx"
-              class="flex text-xs text-white/90 items-center gap-2 relative group"
+              class="flex text-xs text-white/90 items-center gap-2 relative group flex-wrap"
               @mouseenter="editingIdx = idx"
               @mouseleave="editingIdx = null"
             >
@@ -131,7 +133,7 @@ async function handleDeleteInvoice() {
                 @update:model-value="(checked) => handleCheckbox(checked, idx)"
                 :disabled="!props.invoice"
               />
-              <div class="flex flex-col flex-1 justify-center">
+              <div class="flex flex-col flex-1 justify-center min-w-0">
                 <ItemForm
                   :key="idx"
                   :item="item"
@@ -150,15 +152,17 @@ async function handleDeleteInvoice() {
             + Add Item
           </button>
         </div>
-        <div class="flex justify-between items-center">
+        <div class="flex justify-between items-center mt-4">
           <span class="text-xs text-white/70">Total</span>
           <span class="text-lg font-bold text-white"
             >₦{{ props.invoice?.total?.toLocaleString() }}</span
           >
         </div>
       </div>
-      <div class="flex gap-2 p-6 justify-between border-t items-center border-white/10">
-        <div class="flex gap-2 items-center">
+      <div
+        class="flex flex-col sm:flex-row gap-2 p-4 sm:p-6 justify-between border-t items-center border-white/10"
+      >
+        <div class="flex gap-2 items-center w-full sm:w-auto">
           <IconPerson class="size-4" />
           <CustomDropdown
             :options="[
@@ -174,8 +178,7 @@ async function handleDeleteInvoice() {
           >
           </CustomDropdown>
         </div>
-
-        <div>
+        <div class="w-full sm:w-auto flex justify-end">
           <button
             class="text-xs px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 ml-2"
             type="button"

@@ -58,52 +58,74 @@ function decrement() {
 </script>
 
 <template>
-  <div class="flex items-center">
+  <div class="flex items-center flex-col md:flex-row">
     <textarea
-      class="text-xs text-white bg-transparent border-none outline-none w-full flex resize-none p-2 py-4 rounded-lg flex-1 pr-4"
+      class="text-xs text-white bg-transparent border-none outline-none w-full flex resize-none p-2 py-4 flex-1/2 pr-4 focus:bg-white/10 rounded-lg"
       rows="1"
       placeholder="Description"
       @blur="emitOnBlur"
       v-model="description"
+      autofocus
     />
-    <div class="flex gap-2 items-center">
-      <button
-        :style="{
-          opacity: props.hovered ? 1 : 0,
-          pointerEvents: props.hovered ? 'auto' : 'none',
-          transition: 'opacity 0.2s',
-        }"
-        class="size-7 bg-white/5 rounded-full flex justify-center items-center cursor-pointer hover:bg-white/20"
-        type="button"
-        @click="decrement"
-      >
-        <IconMinus class="text-white/50 size-2.5" />
-      </button>
-      <span class="text-xs min-w-4 text-center">{{ quantity }}</span>
-      <button
-        :style="{
-          opacity: props.hovered ? 1 : 0,
-          pointerEvents: props.hovered ? 'auto' : 'none',
-          transition: 'opacity 0.2s',
-        }"
-        class="size-7 bg-white/5 hover:bg-white/20 rounded-full flex justify-center items-center cursor-pointer"
-        type="button"
-        @click="increment"
-      >
-        <IconPlus class="text-white/50 size-2.5" />
-      </button>
+
+    <div class="text-xs w-full flex flex-1/2">
+      <div class="flex gap-2 items-center flex-1">
+        <!-- <button
+          :style="{
+            opacity: props.hovered ? 1 : 0,
+            pointerEvents: props.hovered ? 'auto' : 'none',
+            transition: 'opacity 0.2s',
+          }"
+          class="size-7 bg-white/5 rounded-full flex justify-center items-center cursor-pointer hover:bg-white/20 focus:bg-white/10"
+          type="button"
+          @click="decrement"
+        >
+          <IconMinus class="text-white/50 size-2.5" />
+        </button> -->
+        <input
+          type="number"
+          min="1"
+          v-model.number="quantity"
+          @input="debounceUpdateItem"
+          class="text-xs bg-transparent border-none outline-none m-0 text-white focus:bg-white/10 p-2 py-4 w-full rounded-lg"
+          style="appearance: textfield"
+        />
+        <!-- <button
+          :style="{
+            opacity: props.hovered ? 1 : 0,
+            pointerEvents: props.hovered ? 'auto' : 'none',
+            transition: 'opacity 0.2s',
+          }"
+          class="size-7 bg-white/5 hover:bg-white/20 rounded-full flex justify-center items-center cursor-pointer"
+          type="button"
+          @click="increment"
+        >
+          <IconPlus class="text-white/50 size-2.5" />
+        </button> -->
+      </div>
+      <label for="rate" class="flex items-center gap-1 flex-1">
+        <!-- <span>₦</span> -->
+        <input
+          type="number"
+          min="0"
+          @input="debounceUpdateItem"
+          v-model.number="rate"
+          class="text-xs bg-transparent border-none outline-none m-0 text-white focus:bg-white/10 p-2 py-4 w-full rounded-lg"
+          placeholder="0"
+          id="rate"
+        />
+      </label>
     </div>
-    <label for="rate" class="flex items-center gap-1 pl-4">
-      <span>₦</span>
-      <input
-        type="number"
-        min="0"
-        @input="debounceUpdateItem"
-        v-model.number="rate"
-        class="text-xs text-white bg-transparent border-none outline-none flex p-0 m-0 w-22"
-        placeholder="0"
-        id="rate"
-      />
-    </label>
   </div>
 </template>
+
+<style scoped>
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+</style>

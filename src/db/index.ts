@@ -44,7 +44,7 @@ const db = new Dexie('InvoiceAppDB') as Dexie & {
 // --- Schema Declaration ---
 db.version(1).stores({
   clients: '++id, name, email, phone',
-  invoices: '++id, clientId, status, dueDate',
+  invoices: '++id, clientId, status, dueDate, issueDate',
   receipts: '++id, invoiceId, paymentDate',
 })
 

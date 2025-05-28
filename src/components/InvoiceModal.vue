@@ -86,18 +86,23 @@ async function handleDeleteInvoice() {
 
 <template>
   <div
-    class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-2 sm:px-0"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
     @click.self="() => emit('close')"
   >
     <div
-      class="rounded-3xl bg-[#18181b] shadow-2xl w-full max-w-2xl h-full max-h-[95vh] mt-6 flex flex-col relative border border-white/10 sm:w-2xl sm:h-[50rem] sm:max-h-[90vh]"
+      class="sm:rounded-3xl bg-[#18181b] shadow-2xl w-full max-w-2xl h-full max-h-full flex flex-col relative border border-white/10 sm:w-2xl sm:h-[50rem] sm:max-h-[90vh]"
     >
       <div
-        class="text-[10px] rounded-t-3xl text-white/30 border-b border-b-white/10 w-full p-4 sm:p-6 bg-[#18181b] flex items-center justify-between"
+        class="rounded-t-3xl text-white/30 border-b border-b-white/10 w-full bg-[#18181b] flex items-center justify-between"
       >
-        {{ formatDate(props.invoice?.issueDate, 'EEE, dd MMM yyyy | HH:mm') }}
+        <div class="flex px-6 items-center gap-2">
+          <div class="text-lg font-semibold text-white">Invoice #{{ props.invoice?.id }}</div>
+          <span class="text-[10px]">
+            {{ formatDate(props.invoice?.issueDate, 'EEE, dd MMM yyyy | HH:mm') }}
+          </span>
+        </div>
         <button
-          class="text-xs text-white cursor-pointer hover:text-white/50 bg-[#18181b] flex place-items-center"
+          class="text-xs text-white cursor-pointer hover:text-white/50 flex place-items-center p-4 sm:p-6"
           @click="() => emit('close')"
         >
           <IconX class="size-4" />
@@ -105,14 +110,11 @@ async function handleDeleteInvoice() {
       </div>
 
       <div class="p-4 sm:p-6 flex-1 flex flex-col overflow-y-auto">
-        <div class="text-lg font-semibold text-white mb-4 sm:mb-6">
-          Invoice #{{ props.invoice?.id }}
-        </div>
         <div class="mb-2 flex-1">
           <div class="flex items-center justify-between">
-            <div class="text-xs text-white/70">Items</div>
+            <div class="text-xs text-white/70">Items ({{ props.invoice?.items?.length }})</div>
             <button
-              class="text-xs px-2 py-1 rounded disabled:opacity-20 disabled:cursor-not-allowed"
+              class="text-xs px-2 py-1 rounded disabled:opacity-20 disabled:cursor-not-allowed cursor-pointer"
               :disabled="!markedItems.length"
               @click="deleteMarkedItems"
               type="button"
@@ -160,7 +162,7 @@ async function handleDeleteInvoice() {
         </div>
       </div>
       <div
-        class="flex flex-col sm:flex-row gap-2 p-4 sm:p-6 justify-between border-t items-center border-white/10"
+        class="flex gap-2 p-4 sm:p-6 justify-between border-t items-center border-white/10"
       >
         <div class="flex gap-2 items-center w-full sm:w-auto">
           <IconPerson class="size-4" />
@@ -174,13 +176,13 @@ async function handleDeleteInvoice() {
               (val) =>
                 updateInvoice(props.invoice.id, { clientId: val === undefined ? undefined : val })
             "
-            class="min-w-32"
+
           >
           </CustomDropdown>
         </div>
         <div class="w-full sm:w-auto flex justify-end">
           <button
-            class="text-xs px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 ml-2"
+            class="text-xs px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 ml-2 cursor-pointer"
             type="button"
             @click="showDeleteConfirm = true"
           >

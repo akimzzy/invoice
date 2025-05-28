@@ -28,5 +28,5 @@ export async function deleteInvoice(id: number): Promise<void> {
 
 // Fetch all invoices
 export async function fetchAllInvoices(): Promise<Invoice[]> {
-  return db.invoices.toArray()
+  return db.invoices.orderBy('issueDate').reverse().toArray()
 }

@@ -9,6 +9,7 @@ import { db } from '@/db'
 import type { Invoice, Client } from '@/db'
 import { fetchAllInvoices } from '@/db/invoiceActions'
 import InvoiceModal from '../components/InvoiceModal.vue'
+// import CustomDropdown from '../components/CustomDropdown.vue'
 import IconPlus from '../components/icons/IconPlus.vue'
 import EmptyState from '../components/EmptyState.vue'
 
@@ -116,8 +117,8 @@ watch(route, (newRoute) => {
 </script>
 
 <template>
-  <main class="flex h-full py-20 mx-auto max-w-4xl container">
-    <div class="h-full w-full">
+  <main class="flex h-full py-6 px-2 sm:py-10 sm:px-6 mx-auto max-w-7xl container">
+    <div class="h-full w-full flex flex-col">
       <div class="mb-10 flex justify-between items-center">
         <div class="flex gap-2 items-center">
           <button
@@ -128,6 +129,9 @@ watch(route, (newRoute) => {
             @click="activeTab = 'invoices'"
           >
             Invoices
+            <span class="font-extrabold text-white/50">
+              {{ filteredInvoices.length }}
+            </span>
           </button>
           <button
             class="px-4 py-2 rounded-lg focus:outline-none text-xs cursor-pointer"
@@ -141,8 +145,8 @@ watch(route, (newRoute) => {
         </div>
       </div>
 
-      <div v-if="activeTab === 'invoices'" class="">
-        <div class="flex mb-8 justify-between" v-if="filteredInvoices.length > 0">
+      <div v-if="activeTab === 'invoices'" class="flex flex-col h-full">
+        <div class="flex mb-4 justify-between">
           <div>
             <!-- <CustomDropdown
               class="w-48"
@@ -176,37 +180,41 @@ watch(route, (newRoute) => {
             </button>
           </template>
         </EmptyState>
-        <ul v-else class="grid grid-cols-3 gap-6">
-          <li
-            class="rounded-4xl overflow-hidden flex flex-col bg-white/15 shadow-lg h-56 justify-between cursor-pointer"
-            v-for="invoice in filteredInvoices"
-            :key="invoice.id"
-            @click="openInvoiceModal(invoice.id)"
-          >
-            <div class="flex flex-col flex-1 bg-black/60 rounded-b-4xl">
-              <div class="flex justify-between p-4 border-b border-white/10 text-[10px]">
-                <span v-if="invoice.issueDate" class="text-white/30 text-center">
-                  {{ formatDate(invoice.issueDate, 'EEE, dd MMM yyyy') }}</span
-                >
-                <span class="text-white/30 text-center">
-                  {{
-                    clients?.find((c) => c.id === invoice.clientId)?.name || 'unknown client'
-                  }}</span
-                >
-              </div>
-              <div class="flex flex-col gap-1 items-center flex-1 justify-center">
-                <span class="text-sm text-white font-bold">Invoice #{{ invoice.id }} </span>
 
-                <span class="text-xs text-white/30">{{ invoice.items.length }} items</span>
+        <div v-else class="flex-1">
+          <ul
+            class="grid grid-cols-1 md:grid-cols-3 sm:grid-cols-2 gap-4 sm:gap-6 h-full overflow-y-auto rounded-2xl pr-2"
+            style="max-height: 75vh"
+          >
+            <li
+              class="rounded-4xl overflow-hidden flex flex-col bg-white/15 shadow-lg h-56 justify-between cursor-pointer transition-transform duration-200 hover:scale-[1.02]"
+              v-for="invoice in filteredInvoices"
+              :key="invoice.id"
+              @click="openInvoiceModal(invoice.id)"
+            >
+              <div class="flex flex-col flex-1 bg-black/60 rounded-b-4xl">
+                <div class="flex justify-between p-4 border-b border-white/10 text-[10px]">
+                  <span v-if="invoice.issueDate" class="text-white/30 text-center">
+                    {{ formatDate(invoice.issueDate, 'EEE, dd MMM yyyy') }}</span
+                  >
+                  <span class="text-white/30 text-center">
+                    {{ clients?.find((c) => c.id === invoice.clientId)?.name || '' }}</span
+                  >
+                </div>
+                <div class="flex flex-col gap-1 items-center flex-1 justify-center">
+                  <span class="text-sm text-white font-bold">Invoice #{{ invoice.id }} </span>
+
+                  <span class="text-xs text-white/30">{{ invoice.items.length }} items</span>
+                </div>
               </div>
-            </div>
-            <div class="flex justify-between items-center flex-col py-2.5">
-              <div class="flex items-center flex-col gap-2">
-                <div class="text-sm text-white">₦{{ invoice.total.toLocaleString() }}</div>
+              <div class="flex justify-between items-center flex-col py-2.5">
+                <div class="flex items-center flex-col gap-2">
+                  <div class="text-sm text-white">₦{{ invoice.total.toLocaleString() }}</div>
+                </div>
               </div>
-            </div>
-          </li>
-        </ul>
+            </li>
+          </ul>
+        </div>
       </div>
 
       <div v-if="activeTab === 'clients'">

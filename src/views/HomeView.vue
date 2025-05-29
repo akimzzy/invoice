@@ -188,7 +188,7 @@ watch(route, (newRoute) => {
             style="max-height: 90vh"
           >
             <li
-              class="rounded-2xl flex cursor-pointer p-4 border bg-white/6 border-white/15"
+              class="rounded-2xl flex cursor-pointer p-4 border bg-white/6 border-white/15 h-max"
               v-for="invoice in filteredInvoices"
               :key="invoice.id"
               @click="openInvoiceModal(invoice.id)"

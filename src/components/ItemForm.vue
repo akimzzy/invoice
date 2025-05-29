@@ -8,7 +8,7 @@ let debounceTimeout: ReturnType<typeof setTimeout> | null = null
 const props = defineProps<{ item: InvoiceItem; hovered?: boolean }>()
 const emit = defineEmits<{ 'update:item': [item: InvoiceItem] }>()
 
-import { watch, nextTick, onMounted } from 'vue'
+import { watch } from 'vue'
 
 const description = ref(props.item.description)
 const quantity = ref(props.item.quantity)
@@ -50,7 +50,7 @@ function emitOnBlur() {
   <div class="flex items-center flex-col md:flex-row">
     <textarea
       ref="textareaRef"
-      class="text-xs text-white bg-transparent border-none outline-none w-full flex resize-none p-2 py-4 flex-1/2 pr-4 focus:bg-white/10 rounded-lg"
+      class="text-xs text-white bg-transparent border-none outline-none w-full flex resize-none p-2 py-4 flex-1/2 pr-4 focus:bg-white/10 rounded-lg placeholder:text-white/15"
       rows="1"
       placeholder="Description"
       @blur="emitOnBlur"
@@ -64,7 +64,7 @@ function emitOnBlur() {
           min="1"
           v-model.number="quantity"
           @input="debounceUpdateItem"
-          class="text-xs bg-transparent border-none outline-none m-0 text-white focus:bg-white/10 p-2 py-4 w-full rounded-lg"
+          class="text-xs bg-transparent border-none outline-none m-0 text-white focus:bg-white/10 p-2 py-4 w-full rounded-lg placeholder:text-white/15"
           style="appearance: textfield"
         />
       </div>
@@ -75,7 +75,7 @@ function emitOnBlur() {
           min="0"
           @input="debounceUpdateItem"
           v-model.number="rate"
-          class="text-xs bg-transparent border-none outline-none m-0 text-white p-2 py-4 w-full rounded-lg pl-0"
+          class="text-xs bg-transparent border-none outline-none m-0 text-white p-2 py-4 w-full rounded-lg pl-0 placeholder:text-white/15"
           placeholder="0"
           id="rate"
         />

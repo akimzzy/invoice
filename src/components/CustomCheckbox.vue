@@ -1,5 +1,5 @@
 <template>
-  <label class="inline-flex items-center cursor-pointer select-none">
+  <label class="inline-flex items-center cursor-pointer select-none h-full">
     <input
       type="checkbox"
       class="sr-only"

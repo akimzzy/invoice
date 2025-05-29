@@ -146,7 +146,7 @@ watch(route, (newRoute) => {
       </div>
 
       <div v-if="activeTab === 'invoices'" class="flex flex-col h-full">
-        <div class="flex mb-4 justify-between">
+        <div class="flex mb-4 justify-between" v-if="filteredInvoices.length">
           <div>
             <!-- <CustomDropdown
               class="w-48"
@@ -160,7 +160,7 @@ watch(route, (newRoute) => {
 
           <button
             @click="addInvoice"
-            class="px-4 py-2 rounded-lg focus:outline-none text-xs cursor-pointer flex gap-2 bg-white/15 *: text-white border border-white/10 items-center"
+            class="px-4 py-2 rounded-lg focus:outline-none text-xs cursor-pointer flex gap-2 bg-white/15 text-white border border-white/10 items-center"
           >
             <IconPlus class="size-3" /> New Invoice
           </button>
@@ -169,6 +169,7 @@ watch(route, (newRoute) => {
           v-if="filteredInvoices.length === 0"
           message="No invoices yet."
           @add="addInvoice"
+          class="mt-20"
         >
           <template #button>
             <button
@@ -187,29 +188,37 @@ watch(route, (newRoute) => {
             style="max-height: 90vh"
           >
             <li
-              class="rounded-4xl overflow-hidden flex flex-col bg-white/15 shadow-lg h-56 justify-between cursor-pointer transition-transform duration-200 hover:scale-[1.02]"
+              class="rounded-2xl flex cursor-pointer p-4 border bg-white/6 border-white/15"
               v-for="invoice in filteredInvoices"
               :key="invoice.id"
               @click="openInvoiceModal(invoice.id)"
             >
-              <div class="flex flex-col flex-1 bg-black/60 rounded-b-4xl">
-                <div class="flex justify-between p-4 border-b border-white/10 text-[10px]">
+              <div class="flex flex-col flex-1">
+                <div class="flex">
+                  <div class="flex gap-3 items-center flex-1">
+                    <span class="text-sm text-white font-bold">Invoice #{{ invoice.id }} </span>
+
+                    <span class="text-xs text-white/30"
+                      >{{ invoice.items.length }} item{{
+                        invoice.items.length > 1 ? 's' : ''
+                      }}</span
+                    >
+                  </div>
+                  <div class="flex justify-between items-center flex-col">
+                    <div class="flex items-center flex-col gap-2">
+                      <div class="text-sm text-white font-bold">
+                        ₦{{ invoice.total.toLocaleString() }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex justify-between border-white/10 text-[10px] mt-2">
                   <span v-if="invoice.issueDate" class="text-white/30 text-center">
                     {{ formatDate(invoice.issueDate, 'EEE, dd MMM yyyy') }}</span
                   >
                   <span class="text-white/30 text-center">
                     {{ clients?.find((c) => c.id === invoice.clientId)?.name || '' }}</span
                   >
-                </div>
-                <div class="flex flex-col gap-1 items-center flex-1 justify-center">
-                  <span class="text-sm text-white font-bold">Invoice #{{ invoice.id }} </span>
-
-                  <span class="text-xs text-white/30">{{ invoice.items.length }} items</span>
-                </div>
-              </div>
-              <div class="flex justify-between items-center flex-col py-2.5">
-                <div class="flex items-center flex-col gap-2">
-                  <div class="text-sm text-white">₦{{ invoice.total.toLocaleString() }}</div>
                 </div>
               </div>
             </li>
@@ -229,6 +238,7 @@ watch(route, (newRoute) => {
           v-if="filteredClients.length === 0"
           message="No clients yet."
           @add="$emit ? $emit('addClient') : null"
+          class="mt-20"
         >
           <template #button>
             <button

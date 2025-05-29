@@ -110,7 +110,7 @@ async function handleDeleteInvoice() {
       </div>
 
       <div class="p-4 sm:p-6 flex-1 flex flex-col overflow-y-auto">
-        <div class="mb-2 flex-1">
+        <div class="mb-2 flex-1 flex flex-col min-h-0">
           <div class="flex items-center justify-between">
             <div class="text-xs text-white/70">Items ({{ props.invoice?.items?.length }})</div>
             <button
@@ -122,7 +122,7 @@ async function handleDeleteInvoice() {
               <IconTrash class="size-4 text-white" />
             </button>
           </div>
-          <ul class="flex flex-col divide-y mt-2 sm:mt-4 divide-white/10">
+          <ul class="flex flex-col divide-y mt-2 sm:mt-4 divide-white/10 overflow-y-auto flex-1">
             <li
               v-for="(item, idx) in props.invoice?.items"
               :key="item.description + idx"
@@ -161,9 +161,7 @@ async function handleDeleteInvoice() {
           >
         </div>
       </div>
-      <div
-        class="flex gap-2 p-4 sm:p-6 justify-between border-t items-center border-white/10"
-      >
+      <div class="flex gap-2 p-4 sm:p-6 justify-between border-t items-center border-white/10">
         <div class="flex gap-2 items-center w-full sm:w-auto">
           <IconPerson class="size-4" />
           <CustomDropdown
@@ -176,7 +174,6 @@ async function handleDeleteInvoice() {
               (val) =>
                 updateInvoice(props.invoice.id, { clientId: val === undefined ? undefined : val })
             "
-
           >
           </CustomDropdown>
         </div>
@@ -217,4 +214,3 @@ async function handleDeleteInvoice() {
     </div>
   </div>
 </template>
-@/index

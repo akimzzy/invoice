@@ -118,7 +118,7 @@ watch(route, (newRoute) => {
 
 <template>
   <main class="flex h-full py-6 px-2 sm:py-10 sm:px-6 mx-auto max-w-7xl container">
-    <div class="h-full w-full flex flex-col">
+    <div class="h-full w-full flex flex-col overflow-hidden">
       <div class="mb-10 flex justify-between items-center">
         <div class="flex gap-2 items-center">
           <button
@@ -183,8 +183,8 @@ watch(route, (newRoute) => {
 
         <div v-else class="flex-1">
           <ul
-            class="grid grid-cols-1 md:grid-cols-3 sm:grid-cols-2 gap-4 sm:gap-6 h-full overflow-y-auto rounded-2xl pr-2"
-            style="max-height: 75vh"
+            class="grid grid-cols-1 md:grid-cols-3 sm:grid-cols-2 gap-4 sm:gap-6 h-full overflow-y-auto rounded-2xl pr-2 pb-44"
+            style="max-height: 90vh"
           >
             <li
               class="rounded-4xl overflow-hidden flex flex-col bg-white/15 shadow-lg h-56 justify-between cursor-pointer transition-transform duration-200 hover:scale-[1.02]"

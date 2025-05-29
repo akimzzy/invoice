@@ -15,7 +15,7 @@ export default defineConfig({
     vueDevTools(),
     tailwindcss(),
     VitePWA({
-      registerType: 'prompt',
+      registerType: 'autoUpdate',
       manifest: {
         name: 'Invoice',
         short_name: 'Invoice',

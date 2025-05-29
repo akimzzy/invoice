@@ -50,32 +50,32 @@ function emitOnBlur() {
   <div class="flex items-center flex-col md:flex-row">
     <textarea
       ref="textareaRef"
-      class="text-xs text-white bg-transparent border-none outline-none w-full flex resize-none p-2 py-4 flex-1/2 pr-4 focus:bg-white/10 rounded-lg placeholder:text-white/15"
+      class="text-xs text-white bg-transparent outline-none w-full flex resize-none p-2 sm:py-4 flex-1/2 pr-4 focus:bg-white/10 placeholder:text-white/15 sm:border-r border-white/10"
       rows="1"
       placeholder="Description"
       @blur="emitOnBlur"
       v-model="description"
     />
 
-    <div class="text-xs w-full flex flex-1/2">
-      <div class="flex gap-2 items-center flex-1">
+    <div class="text-xs w-full flex flex-1/2 border-white/5">
+      <div class="flex gap-2 items-center flex-1 sm:border-r border-white/10">
         <input
           type="number"
           min="1"
           v-model.number="quantity"
           @input="debounceUpdateItem"
-          class="text-xs bg-transparent border-none outline-none m-0 text-white focus:bg-white/10 p-2 py-4 w-full rounded-lg placeholder:text-white/15"
+          class="text-xs bg-transparent border-none outline-none m-0 text-white focus:bg-white/10 p-2 sm:py-4 w-full placeholder:text-white/15"
           style="appearance: textfield"
         />
       </div>
-      <label for="rate" class="flex items-center gap-1 flex-1 rate-label">
+      <label for="rate" class="flex items-center gap-1 flex-1 focus-within:bg-white/10">
         <span class="pl-2">₦</span>
         <input
           type="number"
           min="0"
           @input="debounceUpdateItem"
           v-model.number="rate"
-          class="text-xs bg-transparent border-none outline-none m-0 text-white p-2 py-4 w-full rounded-lg pl-0 placeholder:text-white/15"
+          class="text-xs bg-transparent border-none outline-none m-0 text-white p-2 sm:py-4 w-full pl-0 placeholder:text-white/15"
           placeholder="0"
           id="rate"
         />
@@ -92,10 +92,5 @@ input[type='number']::-webkit-outer-spin-button {
 }
 input[type='number'] {
   -moz-appearance: textfield;
-}
-.rate-label:focus-within {
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 0.5rem;
-  transition: background 0.2s;
 }
 </style>

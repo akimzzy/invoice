@@ -183,46 +183,47 @@ watch(route, (newRoute) => {
         </EmptyState>
 
         <div v-else class="flex-1">
-          <ul
-            class="grid grid-cols-1 md:grid-cols-3 sm:grid-cols-2 gap-2 sm:gap-4 h-full overflow-y-auto rounded-2xl pb-44"
-            style="max-height: 90vh"
-          >
-            <li
-              class="rounded-2xl flex cursor-pointer p-4 border bg-white/6 border-white/15 h-max"
-              v-for="invoice in filteredInvoices"
-              :key="invoice.id"
-              @click="openInvoiceModal(invoice.id)"
+          <div class="h-full overflow-y-auto" style="max-height: 90vh">
+            <ul
+              class="grid grid-cols-1 md:grid-cols-3 sm:grid-cols-2 gap-2 sm:gap-4 rounded-2xl pb-44"
             >
-              <div class="flex flex-col flex-1">
-                <div class="flex">
-                  <div class="flex gap-3 items-center flex-1">
-                    <span class="text-sm text-white font-bold">Invoice #{{ invoice.id }} </span>
+              <li
+                class="rounded-2xl flex cursor-pointer p-4 border bg-white/6 border-white/15 h-max"
+                v-for="invoice in filteredInvoices"
+                :key="invoice.id"
+                @click="openInvoiceModal(invoice.id)"
+              >
+                <div class="flex flex-col flex-1">
+                  <div class="flex">
+                    <div class="flex gap-3 items-center flex-1">
+                      <span class="text-sm text-white font-bold">Invoice #{{ invoice.id }} </span>
 
-                    <span class="text-xs text-white/30"
-                      >{{ invoice.items.length }} item{{
-                        invoice.items.length > 1 ? 's' : ''
-                      }}</span
-                    >
-                  </div>
-                  <div class="flex justify-between items-center flex-col">
-                    <div class="flex items-center flex-col gap-2">
-                      <div class="text-sm text-white font-bold">
-                        ₦{{ invoice.total.toLocaleString() }}
+                      <span class="text-xs text-white/30"
+                        >{{ invoice.items.length }} item{{
+                          invoice.items.length > 1 ? 's' : ''
+                        }}</span
+                      >
+                    </div>
+                    <div class="flex justify-between items-center flex-col">
+                      <div class="flex items-center flex-col gap-2">
+                        <div class="text-sm text-white font-bold">
+                          ₦{{ invoice.total.toLocaleString() }}
+                        </div>
                       </div>
                     </div>
                   </div>
+                  <div class="flex justify-between border-white/10 text-[10px] mt-2">
+                    <span v-if="invoice.issueDate" class="text-white/30 text-center">
+                      {{ formatDate(invoice.issueDate, 'EEE, dd MMM yyyy') }}</span
+                    >
+                    <span class="text-white/30 text-center">
+                      {{ clients?.find((c) => c.id === invoice.clientId)?.name || '' }}</span
+                    >
+                  </div>
                 </div>
-                <div class="flex justify-between border-white/10 text-[10px] mt-2">
-                  <span v-if="invoice.issueDate" class="text-white/30 text-center">
-                    {{ formatDate(invoice.issueDate, 'EEE, dd MMM yyyy') }}</span
-                  >
-                  <span class="text-white/30 text-center">
-                    {{ clients?.find((c) => c.id === invoice.clientId)?.name || '' }}</span
-                  >
-                </div>
-              </div>
-            </li>
-          </ul>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
 

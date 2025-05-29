@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { ref, toRaw } from 'vue'
 import IconTrash from './icons/IconTrash.vue'
-import IconPerson from './icons/IconPerson.vue'
 import IconX from './icons/IconX.vue'
 import CustomCheckbox from './CustomCheckbox.vue'
 import CustomDropdown from './CustomDropdown.vue'
 import ConfirmDeleteModal from './ConfirmDeleteModal.vue'
 import ItemForm from './ItemForm.vue'
 import { formatDate } from 'date-fns'
+import IconPerson from './icons/IconPerson.vue'
 
 import type { Invoice, Client, InvoiceItem } from '@/db'
 import { updateInvoiceItems, deleteInvoice, updateInvoice } from '@/db/invoiceActions.ts'
@@ -161,9 +161,8 @@ async function handleDeleteInvoice() {
           >
         </div>
       </div>
-      <div class="flex gap-2 p-6 justify-between border-t items-center border-white/10">
+      <div class="flex gap-2 p-6 pb-10 sm:pb-6 justify-between border-t items-center border-white/10">
         <div class="flex gap-2 items-center w-full sm:w-auto">
-          <IconPerson class="size-4" />
           <CustomDropdown
             :options="[
               { label: 'None', value: undefined },
@@ -175,6 +174,9 @@ async function handleDeleteInvoice() {
                 updateInvoice(props.invoice.id, { clientId: val === undefined ? undefined : val })
             "
           >
+            <template #selected-icon>
+              <IconPerson class="size-3" />
+            </template>
           </CustomDropdown>
         </div>
         <div class="w-full sm:w-auto flex justify-end">
@@ -187,30 +189,12 @@ async function handleDeleteInvoice() {
           </button>
         </div>
       </div>
-      <div
-        v-if="showDeleteConfirm"
-        class="fixed inset-0 z-60 flex items-center justify-center bg-black/60 text-xs"
-      >
-        <div class="bg-[#18181b] rounded-2xl p-8 shadow-2xl flex flex-col items-center">
-          <div class="text-white text-lg font-semibold mb-4">Confirm Deletion</div>
-          <div class="text-white/70 mb-6">
-            Are you sure you want to delete this invoice? This action cannot be undone.
-          </div>
-          <div class="flex gap-4">
-            <button
-              class="px-4 py-2 rounded-lg bg-neutral-700 text-white hover:bg-neutral-600"
-              @click="showDeleteConfirm = false"
-            >
-              Cancel
-            </button>
-            <ConfirmDeleteModal
-              :visible="showDeleteConfirm"
-              @confirm="handleDeleteInvoice"
-              @cancel="showDeleteConfirm = false"
-            />
-          </div>
-        </div>
-      </div>
+
+      <ConfirmDeleteModal
+        :visible="showDeleteConfirm"
+        @confirm="handleDeleteInvoice"
+        @cancel="showDeleteConfirm = false"
+      />
     </div>
   </div>
 </template>

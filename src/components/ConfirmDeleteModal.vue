@@ -10,13 +10,13 @@
       </div>
       <div class="flex gap-4">
         <button
-          class="px-4 py-2 rounded-lg bg-neutral-700 text-white hover:bg-neutral-600"
+          class="px-4 py-2 rounded-lg bg-neutral-700 text-white hover:bg-neutral-600 cursor-pointer"
           @click="$emit('cancel')"
         >
           Cancel
         </button>
         <button
-          class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700"
+          class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 cursor-pointer"
           @click="$emit('confirm')"
         >
           Delete
@@ -28,5 +28,5 @@
 
 <script setup lang="ts">
 defineProps<{ visible: boolean }>()
- defineEmits(['confirm', 'cancel'])
+defineEmits(['confirm', 'cancel'])
 </script>

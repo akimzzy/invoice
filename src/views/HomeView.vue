@@ -184,7 +184,7 @@ watch(route, (newRoute) => {
 
         <div v-else class="flex-1">
           <ul
-            class="grid grid-cols-1 md:grid-cols-3 sm:grid-cols-2 gap-4 sm:gap-6 h-full overflow-y-auto rounded-2xl pr-2 pb-44"
+            class="grid grid-cols-1 md:grid-cols-3 sm:grid-cols-2 gap-2 sm:gap-4 h-full overflow-y-auto rounded-2xl pb-44"
             style="max-height: 90vh"
           >
             <li

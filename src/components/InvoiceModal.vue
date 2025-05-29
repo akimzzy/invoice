@@ -95,21 +95,21 @@ async function handleDeleteInvoice() {
       <div
         class="rounded-t-3xl text-white/30 border-b border-b-white/10 w-full bg-[#18181b] flex items-center justify-between"
       >
-        <div class="flex px-6 items-center gap-2">
+        <div class="flex p-5 items-center gap-2">
           <div class="text-lg font-semibold text-white">Invoice #{{ props.invoice?.id }}</div>
           <span class="text-[10px]">
             {{ formatDate(props.invoice?.issueDate, 'EEE, dd MMM yyyy | HH:mm') }}
           </span>
         </div>
         <button
-          class="text-xs text-white cursor-pointer hover:text-white/50 flex place-items-center p-4 sm:p-6"
+          class="text-xs text-white cursor-pointer hover:text-white/50 flex place-items-center p-5 sm:p-6"
           @click="() => emit('close')"
         >
           <IconX class="size-4" />
         </button>
       </div>
 
-      <div class="p-4 sm:p-6 flex-1 flex flex-col overflow-y-auto">
+      <div class="p-6 flex-1 flex flex-col overflow-y-auto">
         <div class="mb-2 flex-1 flex flex-col min-h-0">
           <div class="flex items-center justify-between">
             <div class="text-xs text-white/70">Items ({{ props.invoice?.items?.length }})</div>
@@ -161,7 +161,7 @@ async function handleDeleteInvoice() {
           >
         </div>
       </div>
-      <div class="flex gap-2 p-4 sm:p-6 justify-between border-t items-center border-white/10">
+      <div class="flex gap-2 p-6 justify-between border-t items-center border-white/10">
         <div class="flex gap-2 items-center w-full sm:w-auto">
           <IconPerson class="size-4" />
           <CustomDropdown
@@ -179,7 +179,7 @@ async function handleDeleteInvoice() {
         </div>
         <div class="w-full sm:w-auto flex justify-end">
           <button
-            class="text-xs px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 ml-2 cursor-pointer"
+            class="text-xs px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 ml-2 cursor-pointer w-max"
             type="button"
             @click="showDeleteConfirm = true"
           >

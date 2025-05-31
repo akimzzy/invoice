@@ -39,12 +39,14 @@
       </div>
       <div class="flex justify-between mt-4">
         <button
+          v-if="isEdit"
           type="button"
           class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors text-xs cursor-pointer"
           @click="handleDelete"
         >
           Delete
         </button>
+        <div v-else></div>
         <div class="flex gap-2">
           <button
             type="button"

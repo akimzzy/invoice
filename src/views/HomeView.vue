@@ -158,7 +158,7 @@ function getInvoiceCount(clientId: number) {
           >
             Invoices
             <span class="font-extrabold text-white/50">
-              {{ filteredInvoices.length }}
+              {{ invoices?.length }}
             </span>
           </button>
           <button
@@ -169,6 +169,9 @@ function getInvoiceCount(clientId: number) {
             @click="activeTab = 'clients'"
           >
             Clients
+            <span class="font-extrabold text-white/50">
+              {{ clients?.length }}
+            </span>
           </button>
         </div>
       </div>
@@ -287,7 +290,7 @@ function getInvoiceCount(clientId: number) {
         </EmptyState>
         <div v-else class="flex-1">
           <div class="h-full overflow-y-auto" style="max-height: 90vh">
-            <ul class="flex flex-col gap-y-4 pb-44">
+            <ul class="flex flex-col gap-y-2 sm:gap-y-4 pb-44">
               <li
                 class="bg-white/10 rounded-2xl py-5 px-6 cursor-pointer"
                 v-for="client in filteredClients"

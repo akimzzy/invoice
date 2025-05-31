@@ -57,35 +57,37 @@ function emitOnBlur() {
       v-model="description"
     />
 
-    <div class="text-xs w-full flex flex-1/2 border-white/5">
-      <div class="flex gap-2 items-center flex-1 border-white/10">
-        <input
-          type="number"
-          min="1"
-          v-model.number="quantity"
-          @input="debounceUpdateItem"
-          class="text-xs border-none outline-none m-0 text-white focus:bg-white/10 p-2 sm:py-4 w-full placeholder:text-white/15 bg-white/3"
-          style="appearance: textfield"
-        />
-      </div>
-      <label
-        for="rate"
-        class="flex relative items-center gap-1 flex-1 focus-within:bg-white/10 bg-white/3"
-      >
-        <span class="pl-2">₦</span>
-        <input
-          type="number"
-          min="0"
-          @input="debounceUpdateItem"
-          v-model.number="rate"
-          class="text-xs bg-transparent border-none outline-none m-0 text-white p-2 sm:py-4 w-full pl-0 placeholder:text-white/15"
-          placeholder="0"
-          id="rate"
-        />
-        <span class="pl-2 absolute bottom-0 right-0 text-[10px] text-white/40"
-          >₦{{ quantity && rate ? (quantity * rate).toLocaleString() : '0' }}</span
+    <div class="text-xs w-full flex-1/2 border-white/5 relative">
+      <div class="w-full flex">
+        <div class="flex-1">
+          <input
+            type="number"
+            min="1"
+            v-model.number="quantity"
+            @input="debounceUpdateItem"
+            class="text-xs border-none outline-none m-0 text-white focus:bg-white/10 p-2 sm:py-4 w-full placeholder:text-white/15 bg-white/3"
+            style="appearance: textfield"
+          />
+        </div>
+        <label
+          for="rate"
+          class="flex items-center gap-1 flex-1 focus-within:bg-white/10 bg-white/3"
         >
-      </label>
+          <span class="pl-2">₦</span>
+          <input
+            type="number"
+            min="0"
+            @input="debounceUpdateItem"
+            v-model.number="rate"
+            class="text-xs bg-transparent border-none outline-none m-0 text-white p-2 sm:py-4 w-full pl-0 placeholder:text-white/15"
+            placeholder="0"
+            id="rate"
+          />
+        </label>
+      </div>
+      <span class="pl-2 p-1 text-[10px] text-white/40 bg-black/25 text-center w-full inline-block"
+        >₦{{ quantity && rate ? (quantity * rate).toLocaleString() : '0' }}</span
+      >
     </div>
   </div>
 </template>

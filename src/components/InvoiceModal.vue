@@ -10,6 +10,9 @@ import ItemForm from './ItemForm.vue'
 import { formatDate } from 'date-fns'
 import IconPerson from './icons/IconPerson.vue'
 import IconPlus from './icons/IconPlus.vue'
+import IconShare from './icons/IconShare.vue'
+import IconDownload from './icons/IconDownload.vue'
+// import IconForward from './icons/IconForward.vue'
 
 import type { Invoice, Client, InvoiceItem } from '@/db'
 import { updateInvoiceItems, deleteInvoice, updateInvoice } from '@/db/invoiceActions.ts'
@@ -172,6 +175,7 @@ const clientModal = ref(false)
           <CustomDropdown
             :options="[
               { label: 'None', value: undefined },
+              { label: '+ Add client', value: undefined, onClick: () => (clientModal = true) },
               ...props.clients.map((c) => ({ label: c.name, value: c.id })),
             ]"
             :model-value="props.invoice?.clientId"
@@ -184,17 +188,31 @@ const clientModal = ref(false)
               <IconPerson class="size-3" />
             </template>
           </CustomDropdown>
-          <button
+          <!-- <button
             @click="clientModal = true"
             class="text-[10px] text-white cursor-pointer hover:text-white/50 flex place-items-center gap-2"
           >
             <IconPlus class="size-2" />
             <div class="w-max">Add client</div>
-          </button>
+          </button> -->
         </div>
-        <div class="w-full sm:w-auto flex justify-end">
+        <div class="w-full sm:w-auto flex justify-end gap-2">
           <button
-            class="text-xs size-8 rounded-lg bg-red-600 text-white hover:bg-red-700 ml-2 cursor-pointer flex justify-center items-center p-2"
+            class="text-xs size-8 rounded-lg bg-white/20 text-white hover:bg-white/40 cursor-pointer flex justify-center items-center p-2"
+            type="button"
+          >
+
+            <IconDownload class="size-full" />
+          </button>
+          <button
+            class="text-xs size-8 rounded-lg bg-white/20 text-white hover:bg-white/40 cursor-pointer flex justify-center items-center p-2"
+            type="button"
+          >
+            <!-- <IconForward class="size-full" /> -->
+            <IconShare class="size-full" />
+          </button>
+          <button
+            class="text-xs size-8 rounded-lg bg-red-600 text-white hover:bg-red-700 cursor-pointer flex justify-center items-center p-2"
             type="button"
             @click="showDeleteConfirm = true"
           >
@@ -210,7 +228,7 @@ const clientModal = ref(false)
         <transition name="bottom-sheet" appear>
           <div v-show="clientModal" class="w-full">
             <ClientFormInner
-              class="border-none rounded-txl"
+              class="border-none pb-20"
               @close="() => (clientModal = false)"
               @saved="
                 (id) => {

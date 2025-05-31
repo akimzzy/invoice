@@ -3,7 +3,7 @@
     class="bg-[#18181b] rounded-3xl shadow-2xl w-full sm:w-2xl max-w-2xl p-6 py-8 relative border border-white/10"
   >
     <button
-      class="absolute top-4 right-4 text-white/30 hover:text-white/60 text-2xl cursor-pointer p-4"
+      class="absolute top-4 right-4 text-white/50 hover:text-white/60 text-2xl cursor-pointer p-4"
       @click="$emit('close')"
     >
       <IconX class="size-4" />
@@ -18,39 +18,48 @@
           <input
             v-model="form.name"
             required
-            class="w-full border border-white/10 bg-transparent rounded-lg p-3 text-white placeholder-white/20 focus:outline-none focus:border-white/30"
+            class="w-full border border-white/30 bg-transparent rounded-lg p-3 text-white placeholder-white/40 focus:outline-none focus:border-white/30"
             placeholder="Client name"
           />
         </div>
 
-        <div class="flex-1 flex items-center gap-2">
+        <div class="flex-1 flex flex-col sm:flex-row sm:items-center gap-4">
           <input
             v-model="form.phone"
-            class="w-full border border-white/10 bg-transparent rounded-lg p-3 text-white placeholder-white/20 focus:outline-none focus:border-white/30"
+            class="w-full border border-white/30 bg-transparent rounded-lg p-3 text-white placeholder-white/40 focus:outline-none focus:border-white/30"
             placeholder="WhatsApp Number (optional)"
           />
           <input
             v-model="form.email"
             type="email"
-            class="w-full border border-white/10 bg-transparent rounded-lg p-3 text-white placeholder-white/20 focus:outline-none focus:border-white/30"
+            class="w-full border border-white/30 bg-transparent rounded-lg p-3 text-white placeholder-white/40 focus:outline-none focus:border-white/30"
             placeholder="Email (optional)"
           />
         </div>
       </div>
-      <div class="flex justify-end gap-2 mt-4">
+      <div class="flex justify-between mt-4">
         <button
           type="button"
-          class="px-4 py-2 rounded-lg bg-white/10 text-white/70 hover:bg-white/20 transition-colors text-xs cursor-pointer"
-          @click="$emit('close')"
+          class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors text-xs cursor-pointer"
+          @click="handleDelete"
         >
-          Cancel
+          Delete
         </button>
-        <button
-          type="submit"
-          class="px-4 py-2 rounded-lg bg-white/20 text-white font-semibold hover:bg-white/30 transition-colors text-xs cursor-pointer"
-        >
-          {{ isEdit ? 'Save' : 'Add' }} Client
-        </button>
+        <div class="flex gap-2">
+          <button
+            type="button"
+            class="px-4 py-2 rounded-lg bg-white/10 text-white/70 hover:bg-white/20 transition-colors text-xs cursor-pointer"
+            @click="$emit('close')"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            class="px-4 py-2 rounded-lg bg-white/20 text-white font-semibold hover:bg-white/30 transition-colors text-xs cursor-pointer"
+          >
+            {{ isEdit ? 'Save' : 'Add' }} Client
+          </button>
+        </div>
       </div>
     </form>
   </div>
@@ -65,7 +74,6 @@ import IconX from './icons/IconX.vue'
 const props = defineProps<{
   client?: Client | null
 }>()
-// const emit = defineEmits(['close', 'saved'])
 const emit = defineEmits<{
   close: []
   saved: [id: number]
@@ -110,6 +118,17 @@ async function handleSubmit() {
     })
   }
   emit('saved', response)
+  emit('close')
+}
+
+async function handleDelete() {
+  if (!props.client) return
+  // Remove client reference from invoices
+  const invoices = await db.invoices.where('clientId').equals(props.client.id).toArray()
+  for (const invoice of invoices) {
+    await db.invoices.update(invoice.id, { clientId: undefined })
+  }
+  await db.clients.delete(props.client.id)
   emit('close')
 }
 </script>

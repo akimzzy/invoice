@@ -1,5 +1,5 @@
 <template>
-  <div class="relative inline-block w-full text-[10px]" ref="dropdownRef">
+  <div class="relative inline-block w-full text-xs" ref="dropdownRef">
     <div
       class="bg-white/5 text-white rounded-lg gap-3 min-w-52 px-4 py-2 cursor-pointer flex justify-between items-center select-none border border-white/20 hover:bg-white/20 transition-colors duration-200"
       @click="toggleDropdown"
@@ -8,9 +8,9 @@
       @keydown.enter.prevent="toggleDropdown"
       @keydown.space.prevent="toggleDropdown"
     >
-      <div class="flex gap-2 items-center">
+      <div class="flex gap-2 items-center w-36">
         <slot name="selected-icon"> </slot>
-        <span> {{ selectedLabel }}</span>
+        <span class="truncate"> {{ selectedLabel }}</span>
       </div>
 
       <svg
@@ -41,8 +41,8 @@
         <li
           v-for="option in options"
           :key="option.value"
-          @click="selectOption(option.value)"
-          class="px-4 py-2 cursor-pointer hover:bg-white/10 text-white transition-colors duration-150"
+          @click="option?.onClick ? helperClose(option.onClick) : selectOption(option.value)"
+          class="px-4 py-2 cursor-pointer hover:bg-white/10 text-white transition-colors duration-150 truncate"
           :class="{ 'bg-white/10': option.value === modelValue }"
         >
           {{ option.label }}
@@ -58,7 +58,11 @@ import { onClickOutside } from '@vueuse/core'
 
 const props = defineProps({
   options: {
-    type: Array as () => Array<{ label: string; value: string | number | undefined }>,
+    type: Array as () => Array<{
+      label: string
+      value: string | number | undefined
+      onClick?: () => boolean
+    }>,
     required: true,
   },
   modelValue: {
@@ -85,9 +89,14 @@ function selectOption(val: string | number | undefined) {
   emit('update:modelValue', val)
   isOpen.value = false
 }
+
+function helperClose(func: () => void) {
+  isOpen.value = false
+  func()
+}
 const selectedLabel = computed(() => {
   const found = props.options.find((opt) => opt.value === props.modelValue)
-  return found ? found.label : 'Select...'
+  return found ? found.label : 'Select client...'
 })
 
 function updateDropdownPosition() {

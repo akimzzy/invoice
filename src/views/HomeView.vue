@@ -15,6 +15,8 @@ import IconWhatsApp from '../components/icons/IconWhatsApp.vue'
 import IconMail from '../components/icons/IconMail.vue'
 import EmptyState from '../components/EmptyState.vue'
 import ClientFormModal from '../components/ClientFormModal.vue'
+import IconPerson from '../components/icons/IconPerson.vue'
+import IconArrowRight from '../components/icons/IconArrowRight.vue'
 
 async function addInvoice() {
   const response = await db.invoices.add({
@@ -117,8 +119,6 @@ watch(route, (newRoute) => {
     selectedInvoiceId.value = null
   }
 })
-// ... existing code ...
-
 const showClientModal = ref(false)
 const editingClient = ref<Client | null>(null)
 
@@ -150,7 +150,7 @@ function getInvoiceCount(clientId: number) {
       <div class="mb-10 flex justify-between items-center">
         <div class="flex gap-2 items-center">
           <button
-            class="px-4 py-2 rounded-lg focus:outline-none text-xs cursor-pointer"
+            class="px-4 py-2 rounded-lg font-bold focus:outline-none text-xs cursor-pointer"
             :class="
               activeTab === 'invoices' ? 'bg-white/30 text-white' : 'bg-white/10 text-white/40'
             "
@@ -162,7 +162,7 @@ function getInvoiceCount(clientId: number) {
             </span>
           </button>
           <button
-            class="px-4 py-2 rounded-lg focus:outline-none text-xs cursor-pointer"
+            class="px-4 py-2 rounded-lg focus:outline-none text-xs cursor-pointer font-bold"
             :class="
               activeTab === 'clients' ? 'bg-white/30 text-white' : 'bg-white/10 text-white/40'
             "
@@ -174,7 +174,7 @@ function getInvoiceCount(clientId: number) {
       </div>
 
       <div v-if="activeTab === 'invoices'" class="flex flex-col h-full">
-        <div class="flex mb-4 justify-between items-center" v-if="filteredInvoices.length">
+        <div class="flex mb-4 justify-between items-center" v-if="invoices?.length">
           <div>
             <CustomDropdown
               class="w-48"
@@ -183,7 +183,11 @@ function getInvoiceCount(clientId: number) {
                 ...(clients?.map((c) => ({ label: c.name, value: c.id })) ?? []),
               ]"
               v-model="clientFilter"
-            />
+            >
+              <template #selected-icon>
+                <IconPerson class="size-3" />
+              </template>
+            </CustomDropdown>
           </div>
 
           <button
@@ -256,7 +260,7 @@ function getInvoiceCount(clientId: number) {
       </div>
 
       <div v-if="activeTab === 'clients'" class="flex flex-col h-full">
-        <div class="flex mb-4 justify-between" v-if="filteredClients.length">
+        <div class="flex mb-4 justify-between items-center" v-if="filteredClients.length">
           <div></div>
           <button
             @click="openAddClientModal"
@@ -281,17 +285,32 @@ function getInvoiceCount(clientId: number) {
             </button>
           </template>
         </EmptyState>
-        <div v-else>
-          <ul class="flex flex-col gap-y-4">
-            <li
-              class="bg-white/10 rounded-2xl flex justify-between py-5 px-6 cursor-pointer"
-              v-for="client in filteredClients"
-              :key="client.id"
-              @click="openEditClientModal(client)"
-            >
-              <div class="flex flex-col gap-2">
-                <h4 class="text-xs">{{ client.name }}</h4>
-                <div class="text-xs text-white/30 flex gap-4" v-if="client.email || client.phone">
+        <div v-else class="flex-1">
+          <div class="h-full overflow-y-auto" style="max-height: 90vh">
+            <ul class="flex flex-col gap-y-4 pb-44">
+              <li
+                class="bg-white/10 rounded-2xl py-5 px-6 cursor-pointer"
+                v-for="client in filteredClients"
+                :key="client.id"
+                @click="openEditClientModal(client)"
+              >
+                <div class="flex justify-between">
+                  <span class="text-xs">
+                    {{ client.name }}
+                  </span>
+                  <div class="text-xs text-gray-400 flex justify-center items-center">
+                    <button
+                      class="cursor-pointer flex gap-1 hover:text-white transition-colors duration-200"
+                      @click.stop="gotoClientInvoice(client.id)"
+                    >
+                      {{ getInvoiceCount(client.id) }} invoices <IconArrowRight class="size-4" />
+                    </button>
+                  </div>
+                </div>
+                <div
+                  class="text-xs text-white/50 flex gap-4 mt-2"
+                  v-if="client.email || client.phone"
+                >
                   <span class="flex gap-2 items-center" v-if="client.email">
                     <IconMail class="size-3" /> {{ client.email }}</span
                   >
@@ -299,12 +318,9 @@ function getInvoiceCount(clientId: number) {
                     ><IconWhatsApp class="size-3" /> {{ client.phone }}</span
                   >
                 </div>
-              </div>
-              <div class="text-xs text-gray-400 flex justify-center items-center">
-                <span>{{ getInvoiceCount(client.id) }} invoices</span>
-              </div>
-            </li>
-          </ul>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>

@@ -14,7 +14,7 @@
       </div>
 
       <svg
-        :class="['transition-transform', isOpen ? 'rotate-180' : '']"
+        :class="['transition-transform size-4', isOpen ? 'rotate-180' : '']"
         width="20"
         height="20"
         fill="none"

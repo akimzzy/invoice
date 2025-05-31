@@ -1,3 +1,4 @@
+import './assets/mobile-global.css'
 import './assets/tailwind.css'
 
 import { createApp } from 'vue'

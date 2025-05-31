@@ -5,9 +5,11 @@ import IconX from './icons/IconX.vue'
 import CustomCheckbox from './CustomCheckbox.vue'
 import CustomDropdown from './CustomDropdown.vue'
 import ConfirmDeleteModal from './ConfirmDeleteModal.vue'
+import ClientFormInner from './ClientFormInner.vue'
 import ItemForm from './ItemForm.vue'
 import { formatDate } from 'date-fns'
 import IconPerson from './icons/IconPerson.vue'
+import IconPlus from './icons/IconPlus.vue'
 
 import type { Invoice, Client, InvoiceItem } from '@/db'
 import { updateInvoiceItems, deleteInvoice, updateInvoice } from '@/db/invoiceActions.ts'
@@ -82,6 +84,8 @@ async function handleDeleteInvoice() {
     console.log(error)
   }
 }
+
+const clientModal = ref(false)
 </script>
 
 <template>
@@ -90,7 +94,7 @@ async function handleDeleteInvoice() {
     @click.self="() => emit('close')"
   >
     <div
-      class="sm:rounded-3xl bg-[#18181b] shadow-2xl w-full max-w-2xl h-full max-h-full flex flex-col relative border border-white/10 sm:w-2xl sm:h-[50rem] sm:max-h-[90vh]"
+      class="sm:rounded-3xl bg-[#18181b] shadow-2xl w-full h-full max-h-full flex flex-col relative border border-white/10 sm:w-2xl max-w-2xl sm:h-[50rem] sm:max-h-[90vh] overflow-hidden"
     >
       <div
         class="rounded-t-3xl text-white/30 border-b border-b-white/10 w-full bg-[#18181b] flex items-center justify-between"
@@ -146,12 +150,12 @@ async function handleDeleteInvoice() {
             </li>
           </ul>
           <button
-            class="text-xs p-3 bg- text-white/70 rounded-xl cursor-pointer mt-4 w-full"
+            class="text-[10px] p-3 bg- text-white/70 rounded-xl cursor-pointer mt-4 w-full flex gap-2 justify-center items-center"
             type="button"
             @click="addInvoiceItem"
             v-if="props.invoice"
           >
-            + Add Item
+            <IconPlus class="size-2" /> Add Item
           </button>
         </div>
         <div class="flex justify-between items-center mt-4">
@@ -161,8 +165,10 @@ async function handleDeleteInvoice() {
           >
         </div>
       </div>
-      <div class="flex gap-2 p-6 pb-10 sm:pb-6 justify-between border-t items-center border-white/10">
-        <div class="flex gap-2 items-center w-full sm:w-auto">
+      <div
+        class="flex gap-2 p-6 pb-10 sm:pb-6 justify-between border-t items-center border-white/10"
+      >
+        <div class="flex gap-4 items-center w-full sm:w-auto">
           <CustomDropdown
             :options="[
               { label: 'None', value: undefined },
@@ -178,16 +184,42 @@ async function handleDeleteInvoice() {
               <IconPerson class="size-3" />
             </template>
           </CustomDropdown>
+          <button
+            @click="clientModal = true"
+            class="text-[10px] text-white cursor-pointer hover:text-white/50 flex place-items-center gap-2"
+          >
+            <IconPlus class="size-2" />
+            <div class="w-max">Add client</div>
+          </button>
         </div>
         <div class="w-full sm:w-auto flex justify-end">
           <button
-            class="text-xs px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 ml-2 cursor-pointer w-max"
+            class="text-xs size-8 rounded-lg bg-red-600 text-white hover:bg-red-700 ml-2 cursor-pointer flex justify-center items-center p-2"
             type="button"
             @click="showDeleteConfirm = true"
           >
-            Delete Invoice
+            <IconTrash class="size-full" />
           </button>
         </div>
+      </div>
+
+      <div
+        v-if="clientModal"
+        class="absolute h-full w-full flex items-end top-0 left-0 bg-black/30 backdrop-blur-xs rounded-3xl"
+      >
+        <transition name="bottom-sheet" appear>
+          <div v-show="clientModal" class="w-full">
+            <ClientFormInner
+              class="border-none rounded-txl"
+              @close="() => (clientModal = false)"
+              @saved="
+                (id) => {
+                  updateInvoice(props.invoice.id, { clientId: id })
+                }
+              "
+            />
+          </div>
+        </transition>
       </div>
 
       <ConfirmDeleteModal
@@ -198,3 +230,22 @@ async function handleDeleteInvoice() {
     </div>
   </div>
 </template>
+
+<style scoped>
+.bottom-sheet-enter-active,
+.bottom-sheet-leave-active {
+  transition:
+    opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.bottom-sheet-enter-from,
+.bottom-sheet-leave-to {
+  opacity: 0;
+  transform: translateY(100%);
+}
+.bottom-sheet-enter-to,
+.bottom-sheet-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+</style>

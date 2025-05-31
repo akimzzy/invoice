@@ -9,9 +9,12 @@ import { db } from '@/db'
 import type { Invoice, Client } from '@/db'
 import { fetchAllInvoices } from '@/db/invoiceActions'
 import InvoiceModal from '../components/InvoiceModal.vue'
-// import CustomDropdown from '../components/CustomDropdown.vue'
+import CustomDropdown from '../components/CustomDropdown.vue'
 import IconPlus from '../components/icons/IconPlus.vue'
+import IconWhatsApp from '../components/icons/IconWhatsApp.vue'
+import IconMail from '../components/icons/IconMail.vue'
 import EmptyState from '../components/EmptyState.vue'
+import ClientFormModal from '../components/ClientFormModal.vue'
 
 async function addInvoice() {
   const response = await db.invoices.add({
@@ -114,6 +117,31 @@ watch(route, (newRoute) => {
     selectedInvoiceId.value = null
   }
 })
+// ... existing code ...
+
+const showClientModal = ref(false)
+const editingClient = ref<Client | null>(null)
+
+function openAddClientModal() {
+  editingClient.value = null
+  showClientModal.value = true
+}
+
+function openEditClientModal(client: Client) {
+  editingClient.value = client
+  showClientModal.value = true
+}
+
+function handleClientModalSaved(id: number) {
+  if (id) {
+    showClientModal.value = false
+    editingClient.value = null
+  }
+}
+
+function getInvoiceCount(clientId: number) {
+  return invoices.value?.filter((inv) => inv.clientId === clientId).length
+}
 </script>
 
 <template>
@@ -124,7 +152,7 @@ watch(route, (newRoute) => {
           <button
             class="px-4 py-2 rounded-lg focus:outline-none text-xs cursor-pointer"
             :class="
-              activeTab === 'invoices' ? 'bg-white/20 text-white' : 'bg-white/10 text-white/40'
+              activeTab === 'invoices' ? 'bg-white/30 text-white' : 'bg-white/10 text-white/40'
             "
             @click="activeTab = 'invoices'"
           >
@@ -136,7 +164,7 @@ watch(route, (newRoute) => {
           <button
             class="px-4 py-2 rounded-lg focus:outline-none text-xs cursor-pointer"
             :class="
-              activeTab === 'clients' ? 'bg-white/20 text-white' : 'bg-white/10 text-white/40'
+              activeTab === 'clients' ? 'bg-white/30 text-white' : 'bg-white/10 text-white/40'
             "
             @click="activeTab = 'clients'"
           >
@@ -146,23 +174,23 @@ watch(route, (newRoute) => {
       </div>
 
       <div v-if="activeTab === 'invoices'" class="flex flex-col h-full">
-        <div class="flex mb-4 justify-between" v-if="filteredInvoices.length">
+        <div class="flex mb-4 justify-between items-center" v-if="filteredInvoices.length">
           <div>
-            <!-- <CustomDropdown
+            <CustomDropdown
               class="w-48"
               :options="[
                 { label: 'All Clients', value: 'all' },
                 ...(clients?.map((c) => ({ label: c.name, value: c.id })) ?? []),
               ]"
               v-model="clientFilter"
-            /> -->
+            />
           </div>
 
           <button
             @click="addInvoice"
             class="px-4 py-2 rounded-lg focus:outline-none text-xs cursor-pointer flex gap-2 bg-white/15 text-white border border-white/10 items-center"
           >
-            <IconPlus class="size-3" /> New Invoice
+            <IconPlus class="size-2" /> New Invoice
           </button>
         </div>
         <EmptyState
@@ -176,7 +204,7 @@ watch(route, (newRoute) => {
               @click="addInvoice"
               class="px-4 py-2 rounded-lg focus:outline-none text-xs cursor-pointer flex gap-2 bg-white/15 *: text-white border border-white/10 items-center hover:bg-white/20"
             >
-              <IconPlus class="size-3" />
+              <IconPlus class="size-2" />
               Add Invoice
             </button>
           </template>
@@ -227,27 +255,28 @@ watch(route, (newRoute) => {
         </div>
       </div>
 
-      <div v-if="activeTab === 'clients'">
-        <div class="mb-4 flex justify-end" v-if="filteredClients.length > 0">
-          <input
-            v-model="clientSearch"
-            placeholder="Search clients..."
-            class="rounded-xl px-3 py-3 text-xs bg-white/20 text-white w-full outline-none border-none"
-          />
+      <div v-if="activeTab === 'clients'" class="flex flex-col h-full">
+        <div class="flex mb-4 justify-between" v-if="filteredClients.length">
+          <div></div>
+          <button
+            @click="openAddClientModal"
+            class="px-4 py-2 rounded-lg focus:outline-none text-xs cursor-pointer flex gap-2 bg-white/15 text-white border border-white/10 items-center"
+          >
+            <IconPlus class="size-2" /> Add Client
+          </button>
         </div>
         <EmptyState
           v-if="filteredClients.length === 0"
           message="No clients yet."
-          @add="$emit ? $emit('addClient') : null"
+          @add="openAddClientModal"
           class="mt-20"
         >
           <template #button>
             <button
-              @click="$emit ? $emit('addClient') : null"
-              class="px-4 py-2 rounded-lg focus:outline-none text-xs cursor-pointer flex gap-2 bg-white/15 *: text-white border border-white/10 items-center hover:bg-white/20"
+              @click="openAddClientModal"
+              class="px-4 py-2 rounded-lg focus:outline-none text-xs cursor-pointer flex gap-2 bg-white/15 text-white border border-white/10 items-center hover:bg-white/20"
             >
-              <IconPlus class="size-3" />
-
+              <IconPlus class="size-2" />
               Add Client
             </button>
           </template>
@@ -258,15 +287,21 @@ watch(route, (newRoute) => {
               class="bg-white/10 rounded-2xl flex justify-between py-5 px-6 cursor-pointer"
               v-for="client in filteredClients"
               :key="client.id"
-              @click="gotoClientInvoice(client.id)"
+              @click="openEditClientModal(client)"
             >
-              <div class="">
+              <div class="flex flex-col gap-2">
                 <h4 class="text-xs">{{ client.name }}</h4>
+                <div class="text-xs text-white/30 flex gap-4" v-if="client.email || client.phone">
+                  <span class="flex gap-2 items-center" v-if="client.email">
+                    <IconMail class="size-3" /> {{ client.email }}</span
+                  >
+                  <span v-if="client.phone" class="flex gap-2 items-center"
+                    ><IconWhatsApp class="size-3" /> {{ client.phone }}</span
+                  >
+                </div>
               </div>
               <div class="text-xs text-gray-400 flex justify-center items-center">
-                <span>50 invoices </span>
-                <span class="size-2 rounded-full bg-white mx-4"></span>
-                <span>45 paid </span>
+                <span>{{ getInvoiceCount(client.id) }} invoices</span>
               </div>
             </li>
           </ul>
@@ -281,5 +316,10 @@ watch(route, (newRoute) => {
     :clients="clients || []"
     @close="closeInvoiceModal"
   />
+  <ClientFormModal
+    v-if="showClientModal"
+    :client="editingClient"
+    @close="showClientModal = false"
+    @saved="handleClientModalSaved"
+  />
 </template>
-@/index@/index

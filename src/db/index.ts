@@ -5,8 +5,8 @@ import Dexie, { type EntityTable } from 'dexie'
 interface Client {
   id: number
   name: string
-  email: string
-  phone: string
+  email?: string
+  phone?: string
 }
 
 interface InvoiceItem {
@@ -43,7 +43,7 @@ const db = new Dexie('InvoiceAppDB') as Dexie & {
 
 // --- Schema Declaration ---
 db.version(1).stores({
-  clients: '++id, name, email, phone',
+  clients: '++id, name',
   invoices: '++id, clientId, status, dueDate, issueDate',
   receipts: '++id, invoiceId, paymentDate',
 })

@@ -1,0 +1,14 @@
+@media (max-width: 600px), (pointer: coarse) {
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* iOS specific fix */
+@supports (-webkit-touch-callout: none) {
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}

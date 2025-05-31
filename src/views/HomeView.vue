@@ -75,8 +75,8 @@ const filteredClients = computed(() => {
   return items.filter(
     (c) =>
       c.name.toLowerCase().includes(search) ||
-      c.email.toLowerCase().includes(search) ||
-      c.phone.toLowerCase().includes(search),
+      (c.email?.toLowerCase() || '').includes(search) ||
+      (c.phone?.toLowerCase() || '').includes(search),
   )
 })
 

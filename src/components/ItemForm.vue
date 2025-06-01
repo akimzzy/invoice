@@ -50,7 +50,7 @@ function emitOnBlur() {
   <div class="flex items-center flex-col md:flex-row">
     <textarea
       ref="textareaRef"
-      class="text-xs text-white bg-transparent outline-none w-full flex resize-none p-2 sm:py-4 flex-1/2 pr-4 focus:bg-white/10 placeholder:text-white/15 border-white/10"
+      class="text-xs text-white bg-transparent outline-none w-full flex resize-none p-2 sm:py-4 flex-1/2 pr-4 focus:bg-white/10 placeholder:text-white/15 border-white/10 h-full"
       rows="1"
       placeholder="Description"
       @blur="emitOnBlur"
@@ -65,7 +65,7 @@ function emitOnBlur() {
             min="1"
             v-model.number="quantity"
             @input="debounceUpdateItem"
-            class="text-xs border-none outline-none m-0 text-white focus:bg-white/10 p-2 sm:py-4 w-full placeholder:text-white/15 bg-white/3"
+            class="text-xs border-none outline-none m-0 text-white focus:bg-white/10 p-2 sm:py-2.5 w-full placeholder:text-white/15 bg-white/3"
             style="appearance: textfield"
           />
         </div>
@@ -79,7 +79,7 @@ function emitOnBlur() {
             min="0"
             @input="debounceUpdateItem"
             v-model.number="rate"
-            class="text-xs bg-transparent border-none outline-none m-0 text-white p-2 sm:py-4 w-full pl-0 placeholder:text-white/15"
+            class="text-xs bg-transparent border-none outline-none m-0 text-white p-2 sm:py-2.5 w-full pl-0 placeholder:text-white/15"
             placeholder="0"
             id="rate"
           />

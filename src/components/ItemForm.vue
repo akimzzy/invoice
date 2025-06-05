@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 
 import type { InvoiceItem } from '@/db'
 
@@ -44,10 +44,11 @@ function debounceUpdateItem() {
 function emitOnBlur() {
   updateItem()
 }
+onMounted(() => textareaRef.value?.focus())
 </script>
 
 <template>
-  <div class="flex items-center flex-col md:flex-row">
+  <div class="flex flex-col md:flex-row h-full items-center">
     <textarea
       ref="textareaRef"
       class="text-xs text-white bg-transparent outline-none w-full flex resize-none p-2 sm:py-4 flex-1/2 pr-4 focus:bg-white/10 placeholder:text-white/15 border-white/10 h-full"
@@ -71,7 +72,7 @@ function emitOnBlur() {
         </div>
         <label
           for="rate"
-          class="flex items-center gap-1 flex-1 focus-within:bg-white/10 bg-white/3"
+          class="flex items-center gap-1 flex-1 focus-within:bg-white/10 bg-white/3 border-l border-white/30"
         >
           <span class="pl-2">₦</span>
           <input
@@ -85,7 +86,7 @@ function emitOnBlur() {
           />
         </label>
       </div>
-      <span class="pl-2 p-1 text-[10px] text-white/40 bg-black/25 text-center w-full inline-block"
+      <span class="pl-2 p-1.5 text-[10px] text-white/40 bg-black/25 text-center w-full inline-block"
         >₦{{ quantity && rate ? (quantity * rate).toLocaleString() : '0' }}</span
       >
     </div>

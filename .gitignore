@@ -28,3 +28,29 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+.env
+dexie-cloud.key
+dexie-cloud.json
+
+# Node modules
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Environment variables
+.env
+.env.*
+.env.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+
+# IDE files
+.vscode/
+.idea/

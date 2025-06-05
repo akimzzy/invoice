@@ -1,11 +1,17 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import {
+  ref,
+  computed,
+  watch,
+  //  onMounted
+} from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { formatDate } from 'date-fns'
 import { liveQuery } from 'dexie'
 import { useObservable, from } from '@vueuse/rxjs'
 
 import { db } from '@/db'
+import { createInvoice } from '@/db/invoiceActions'
 import type { Invoice, Client } from '@/db'
 import { fetchAllInvoices } from '@/db/invoiceActions'
 import InvoiceModal from '../components/InvoiceModal.vue'
@@ -18,13 +24,16 @@ import ClientFormModal from '../components/ClientFormModal.vue'
 import IconPerson from '../components/icons/IconPerson.vue'
 import IconArrowRight from '../components/icons/IconArrowRight.vue'
 
+// onMounted(async () => await db.cloud.logout())
+
 async function addInvoice() {
-  const response = await db.invoices.add({
+  const response = await createInvoice({
     status: 'unpaid',
     items: [{ description: '', quantity: 1, rate: 0 }],
     total: 0,
     issueDate: new Date().toISOString(),
   })
+
   openInvoiceModal(response)
 }
 
@@ -82,12 +91,12 @@ const filteredClients = computed(() => {
   )
 })
 
-const gotoClientInvoice = (client: number) => {
+const gotoClientInvoice = (client: string) => {
   router.push({ path: '/', query: { tab: 'invoices', client } })
 }
 
-const selectedInvoiceId = ref<number | null>(
-  route.query.invoice ? Number(route.query.invoice) : null,
+const selectedInvoiceId = ref<string | null>(
+  route.query.invoice ? String(route.query.invoice) : null,
 )
 const showInvoiceModal = ref(false)
 const selectedInvoice = computed(
@@ -96,7 +105,7 @@ const selectedInvoice = computed(
 
 // Removed markedItems, editingIdx, editingDescription, deleteMarkedItems, addInvoiceItem
 
-const openInvoiceModal = (invoiceId: number) => {
+const openInvoiceModal = (invoiceId: string) => {
   selectedInvoiceId.value = invoiceId
   showInvoiceModal.value = true
   router.replace({ query: { ...route.query, invoice: invoiceId } })
@@ -112,7 +121,7 @@ const closeInvoiceModal = () => {
 
 watch(route, (newRoute) => {
   if (newRoute.query.invoice) {
-    selectedInvoiceId.value = Number(newRoute.query.invoice)
+    selectedInvoiceId.value = String(newRoute.query.invoice)
     showInvoiceModal.value = true
   } else {
     showInvoiceModal.value = false
@@ -139,7 +148,7 @@ function handleClientModalSaved(id: number) {
   }
 }
 
-function getInvoiceCount(clientId: number) {
+function getInvoiceCount(clientId: string) {
   return invoices.value?.filter((inv) => inv.clientId === clientId).length
 }
 </script>
@@ -231,7 +240,7 @@ function getInvoiceCount(clientId: number) {
                 <div class="flex flex-col flex-1">
                   <div class="flex">
                     <div class="flex gap-3 items-center flex-1">
-                      <span class="text-sm text-white font-bold">Invoice #{{ invoice.id }} </span>
+                      <span class="text-sm text-white font-bold">Invoice #{{ invoice.code }} </span>
 
                       <span class="text-xs text-white/30"
                         >{{ invoice.items.length }} item{{

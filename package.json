@@ -19,6 +19,8 @@
     "@vueuse/rxjs": "^13.2.0",
     "date-fns": "^4.1.0",
     "dexie": "^4.0.11",
+    "dexie-cloud-addon": "^4.0.11",
+    "html2pdf.js": "^0.10.3",
     "rxjs": "^7.8.2",
     "tailwindcss": "^4.1.5",
     "uuid": "^11.1.0",

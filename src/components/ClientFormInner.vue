@@ -78,7 +78,7 @@ const props = defineProps<{
 }>()
 const emit = defineEmits<{
   close: []
-  saved: [id: number]
+  saved: [id: string]
 }>()
 const isEdit = computed(() => !!props.client)
 const form = ref({
@@ -105,7 +105,7 @@ watch(
 
 async function handleSubmit() {
   if (!form.value.name.trim()) return
-  let response: number
+  let response: string | number
   if (isEdit.value && props.client) {
     response = await db.clients.update(props.client.id, {
       name: form.value.name,
@@ -119,7 +119,7 @@ async function handleSubmit() {
       phone: form.value.phone || undefined,
     })
   }
-  emit('saved', response)
+  emit('saved', String(response))
   emit('close')
 }
 

@@ -43,7 +43,7 @@
           :key="option.value"
           @click="option?.onClick ? helperClose(option.onClick) : selectOption(option.value)"
           class="px-4 py-2 cursor-pointer hover:bg-white/10 text-white transition-colors duration-150 truncate"
-          :class="{ 'bg-white/10': option.value === modelValue }"
+          :class="{ 'bg-white/10': option.value === (modelValue || value) }"
         >
           {{ option.label }}
         </li>
@@ -70,8 +70,15 @@ const props = defineProps({
     required: false,
     default: null,
   },
+  value: {
+    type: String,
+  },
 })
-const emit = defineEmits(['update:modelValue'])
+
+const emit = defineEmits<{
+  'update:modelValue': [val: string | number | undefined]
+  onChange: [val: string | number | undefined]
+}>()
 
 const isOpen = ref(false)
 const dropdownRef = useTemplateRef<HTMLElement>('dropdownRef')
@@ -87,6 +94,7 @@ function toggleDropdown() {
 }
 function selectOption(val: string | number | undefined) {
   emit('update:modelValue', val)
+  emit('onChange', val)
   isOpen.value = false
 }
 
@@ -95,7 +103,7 @@ function helperClose(func: () => void) {
   func()
 }
 const selectedLabel = computed(() => {
-  const found = props.options.find((opt) => opt.value === props.modelValue)
+  const found = props.options.find((opt) => opt.value === (props.modelValue || props.value))
   return found ? found.label : 'Select client...'
 })
 

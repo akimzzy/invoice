@@ -1,19 +1,14 @@
 <script setup lang="ts">
-import {
-  ref,
-  computed,
-  watch,
-  //  onMounted
-} from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { formatDate } from 'date-fns'
 import { liveQuery } from 'dexie'
 import { useObservable, from } from '@vueuse/rxjs'
+import type { DXCUserInteraction } from 'dexie-cloud-addon'
 
-import { db } from '@/db'
-import { createInvoice } from '@/db/invoiceActions'
+import { db, currentUser, logout, login } from '@/db'
 import type { Invoice, Client } from '@/db'
-import { fetchAllInvoices } from '@/db/invoiceActions'
+import { fetchAllInvoices, createInvoice } from '@/db/invoiceActions'
 import InvoiceModal from '../components/InvoiceModal.vue'
 import CustomDropdown from '../components/CustomDropdown.vue'
 import IconPlus from '../components/icons/IconPlus.vue'
@@ -21,10 +16,11 @@ import IconWhatsApp from '../components/icons/IconWhatsApp.vue'
 import IconMail from '../components/icons/IconMail.vue'
 import EmptyState from '../components/EmptyState.vue'
 import ClientFormModal from '../components/ClientFormModal.vue'
+import LoginModal from '../components/LoginModal.vue'
 import IconPerson from '../components/icons/IconPerson.vue'
 import IconArrowRight from '../components/icons/IconArrowRight.vue'
 
-// onMounted(async () => await db.cloud.logout())
+const dexieObserver = useObservable(db.cloud.userInteraction)
 
 async function addInvoice() {
   const response = await createInvoice({
@@ -40,35 +36,24 @@ async function addInvoice() {
 const route = useRoute()
 const router = useRouter()
 
-const activeTab = ref<'invoices' | 'clients'>(
+const activeTab = computed<'invoices' | 'clients'>(() =>
   route.query.tab === 'clients' ? 'clients' : 'invoices',
 )
-const clientFilter = ref<number | 'all'>(route.query.client ? Number(route.query.client) : 'all')
+
+function changeTab(tab: 'invoices' | 'clients') {
+  const query = { ...route.query, tab, client: undefined, invoice: undefined }
+  router.push({ query })
+}
+
+const clientFilter = computed<string>(() =>
+  route.query.client ? String(route.query.client) : 'all',
+)
+
+function filterByCLient(client: string | number | undefined) {
+  const query = { ...route.query, tab: 'invoice', client, invoice: undefined }
+  router.push({ query })
+}
 const clientSearch = ref('')
-
-watch([activeTab, clientFilter], ([tab, client]) => {
-  const query: Record<string, string | undefined> = { ...route.query, tab }
-  if (tab === 'invoices') {
-    query.client = client !== 'all' ? String(client) : undefined
-  } else {
-    delete query.client
-  }
-  router.replace({ query })
-})
-
-watch(route, (newRoute) => {
-  if (
-    newRoute.query.tab &&
-    (newRoute.query.tab === 'invoices' || newRoute.query.tab === 'clients')
-  ) {
-    activeTab.value = newRoute.query.tab as 'invoices' | 'clients'
-  }
-  if (newRoute.query.client) {
-    clientFilter.value = Number(newRoute.query.client)
-  } else {
-    clientFilter.value = 'all'
-  }
-})
 
 const invoices = useObservable<Invoice[]>(from(liveQuery(() => fetchAllInvoices())))
 const clients = useObservable<Client[]>(from(liveQuery(() => db.clients.toArray())))
@@ -92,7 +77,8 @@ const filteredClients = computed(() => {
 })
 
 const gotoClientInvoice = (client: string) => {
-  router.push({ path: '/', query: { tab: 'invoices', client } })
+  const query: Record<string, string | undefined> = { ...route.query, tab: 'invoices', client }
+  router.push({ path: '/', query })
 }
 
 const selectedInvoiceId = ref<string | null>(
@@ -119,15 +105,6 @@ const closeInvoiceModal = () => {
   router.replace({ query })
 }
 
-watch(route, (newRoute) => {
-  if (newRoute.query.invoice) {
-    selectedInvoiceId.value = String(newRoute.query.invoice)
-    showInvoiceModal.value = true
-  } else {
-    showInvoiceModal.value = false
-    selectedInvoiceId.value = null
-  }
-})
 const showClientModal = ref(false)
 const editingClient = ref<Client | null>(null)
 
@@ -151,6 +128,19 @@ function handleClientModalSaved(id: number) {
 function getInvoiceCount(clientId: string) {
   return invoices.value?.filter((inv) => inv.clientId === clientId).length
 }
+
+onMounted(() => {
+  if (selectedInvoiceId.value) {
+    showInvoiceModal.value = true
+  }
+})
+
+const user = useObservable(currentUser)
+const isAuthenticated = computed(
+  () => user.value && user.value.email && user.value.email !== 'unauthorized',
+)
+
+const showLoginModal = ref(false)
 </script>
 
 <template>
@@ -163,7 +153,7 @@ function getInvoiceCount(clientId: string) {
             :class="
               activeTab === 'invoices' ? 'bg-white/30 text-white' : 'bg-white/10 text-white/40'
             "
-            @click="activeTab = 'invoices'"
+            @click="changeTab('invoices')"
           >
             Invoices
             <span class="font-extrabold text-white/50">
@@ -175,13 +165,29 @@ function getInvoiceCount(clientId: string) {
             :class="
               activeTab === 'clients' ? 'bg-white/30 text-white' : 'bg-white/10 text-white/40'
             "
-            @click="activeTab = 'clients'"
+            @click="changeTab('clients')"
           >
             Clients
             <span class="font-extrabold text-white/50">
               {{ clients?.length }}
             </span>
           </button>
+        </div>
+        <div class="flex justify-center p-3 text-xs">
+          <button
+            @click="
+              () => {
+                login()
+                showLoginModal = true
+              }
+            "
+            v-if="!isAuthenticated"
+            class="cursor-pointer"
+          >
+            Login
+          </button>
+          <button @click="logout" v-else class="cursor-pointer">Logout</button>
+          <!-- {{ user }} -->
         </div>
       </div>
 
@@ -194,7 +200,8 @@ function getInvoiceCount(clientId: string) {
                 { label: 'All Clients', value: 'all' },
                 ...(clients?.map((c) => ({ label: c.name, value: c.id })) ?? []),
               ]"
-              v-model="clientFilter"
+              :value="clientFilter"
+              @on-change="filterByCLient"
             >
               <template #selected-icon>
                 <IconPerson class="size-3" />
@@ -257,12 +264,12 @@ function getInvoiceCount(clientId: string) {
                     </div>
                   </div>
                   <div class="flex justify-between border-white/10 text-[10px] mt-2">
-                    <span v-if="invoice.issueDate" class="text-white/30 text-center">
-                      {{ formatDate(invoice.issueDate, 'EEE, dd MMM yyyy') }}</span
-                    >
-                    <span class="text-white/30 text-center">
-                      {{ clients?.find((c) => c.id === invoice.clientId)?.name || '' }}</span
-                    >
+                    <span v-if="invoice.issueDate" class="text-white/30 text-center">{{
+                      formatDate(invoice.issueDate, 'EEE, dd MMM yyyy')
+                    }}</span>
+                    <span class="text-white/30 text-center">{{
+                      clients?.find((c) => c.id === invoice.clientId)?.name || ''
+                    }}</span>
                   </div>
                 </div>
               </li>
@@ -349,5 +356,11 @@ function getInvoiceCount(clientId: string) {
     :client="editingClient"
     @close="showClientModal = false"
     @saved="handleClientModalSaved"
+  />
+  <LoginModal
+    v-if="showLoginModal"
+    @close="showLoginModal = false"
+    :is-authenticated="isAuthenticated"
+    :observer="dexieObserver as DXCUserInteraction"
   />
 </template>

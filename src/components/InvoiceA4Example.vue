@@ -125,6 +125,15 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
+  font-family:
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Monaco,
+    Consolas,
+    Liberation Mono,
+    Courier New,
+    monospace;
 }
 
 .a4-page {

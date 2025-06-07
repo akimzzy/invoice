@@ -210,7 +210,9 @@ const selectMode = ref(false)
               :model-value="props.invoice?.clientId"
               @update:modelValue="
                 (val) =>
-                  updateInvoice(props.invoice.id, { clientId: val === undefined ? undefined : val })
+                  updateInvoice(props.invoice.id, {
+                    clientId: val === undefined ? undefined : String(val),
+                  })
               "
             >
               <template #selected-icon>
@@ -367,6 +369,7 @@ const selectMode = ref(false)
   opacity: 1;
   transform: translateY(0);
 }
+
 .bottom-sheet-invoice-enter-active,
 .bottom-sheet-invoice-leave-active {
   transition:

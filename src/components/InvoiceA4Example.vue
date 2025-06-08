@@ -1,24 +1,28 @@
 <script setup lang="ts">
 import { formatDate } from 'date-fns'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import type { Invoice, InvoiceItem } from '@/db'
 
-const currentDate = formatDate(new Date(), 'dd MMM yyyy')
+interface CompanyInfo {
+  name?: string
+  email?: string
+  phone?: string
+}
 
-const items = [
-  { description: 'Website Development', quantity: 1, rate: 500000, amount: 500000 },
-  { description: 'UI/UX Design', quantity: 1, rate: 300000, amount: 300000 },
-  { description: 'Mobile App Development', quantity: 1, rate: 800000, amount: 800000 },
-  { description: 'SEO Optimization', quantity: 2, rate: 150000, amount: 300000 },
-  { description: 'Content Writing', quantity: 5, rate: 50000, amount: 250000 },
-  { description: 'Server Setup & Configuration', quantity: 1, rate: 400000, amount: 400000 },
-  { description: 'Database Design', quantity: 1, rate: 250000, amount: 250000 },
-  { description: 'Security Audit', quantity: 1, rate: 350000, amount: 350000 },
-  { description: 'Performance Optimization', quantity: 2, rate: 200000, amount: 400000 },
-]
+const props = defineProps<{
+  invoice: Invoice
+  companyInfo?: CompanyInfo
+}>()
 
-const totalAmount = items.reduce((sum, item) => sum + item.amount, 0)
+const currentDate = formatDate(props.invoice.issueDate || new Date(), 'dd MMM yyyy')
 
-const pages = ref<Array<typeof items>>([])
+const items = computed(() => props.invoice?.items || [])
+const totalAmount = computed(() => {
+  if (typeof props.invoice?.total === 'number') return props.invoice.total
+  return items.value.reduce((sum, item) => sum + (item.rate ?? item.quantity * item.rate), 0)
+})
+
+const pages = ref<Array<InvoiceItem[]>>([])
 const itemsHeight = 35 // Height per item row including padding and borders
 const headerHeight = 90 // Header height including padding and border
 const footerHeight = 60 // Footer height including padding and border
@@ -33,14 +37,18 @@ const availableHeight =
 onMounted(() => {
   // Calculate items per page based on available height
   const itemsPerPage = Math.floor(availableHeight / itemsHeight)
-  const pageCount = Math.ceil(items.length / itemsPerPage)
+  const pageCount = Math.ceil(items.value.length / itemsPerPage)
 
   // Create pages with proper item distribution
   pages.value = Array.from({ length: pageCount }, (_, i) => {
     const start = i * itemsPerPage
-    return items.slice(start, start + itemsPerPage)
+    return items.value.slice(start, start + itemsPerPage)
   })
 })
+
+const invoiceNumber = computed(() =>
+  props.invoice?.code ? `Invoice #${props.invoice.code}` : 'Invoice',
+)
 </script>
 
 <template>
@@ -50,16 +58,16 @@ onMounted(() => {
       <header class="page-header">
         <div class="header-content">
           <div class="company-info">
-            <h1>Invoice #12345</h1>
+            <h1>{{ invoiceNumber }}</h1>
             <div class="company-contact">
               <p>{{ currentDate }}</p>
             </div>
           </div>
-          <div class="company-info">
-            <h1>Your Company Name</h1>
+          <div class="company-info" v-if="props.companyInfo">
+            <h1>{{ props.companyInfo.name }}</h1>
             <div class="company-contact">
-              <p>contact@company.com</p>
-              <p>+1 234 567 890</p>
+              <p>{{ props.companyInfo.email }}</p>
+              <p>{{ props.companyInfo.phone }}</p>
             </div>
           </div>
         </div>
@@ -84,7 +92,7 @@ onMounted(() => {
                 <td>{{ item.description }}</td>
                 <td>{{ item.quantity }}</td>
                 <td>₦{{ item.rate.toLocaleString() }}</td>
-                <td>₦{{ item.amount.toLocaleString() }}</td>
+                <td>₦{{ (item.rate ?? item.quantity * item.rate).toLocaleString() }}</td>
               </tr>
             </tbody>
           </table>

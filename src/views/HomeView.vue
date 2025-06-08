@@ -19,6 +19,10 @@ import ClientFormModal from '../components/ClientFormModal.vue'
 import LoginModal from '../components/LoginModal.vue'
 import IconPerson from '../components/icons/IconPerson.vue'
 import IconArrowRight from '../components/icons/IconArrowRight.vue'
+import IconNotification from '../components/icons/IconNotification.vue'
+import IconDropdown from '../components/IconDropdown.vue'
+import IconLogout from '../components/icons/IconLogout.vue'
+import IconAccount from '../components/icons/IconPerson.vue'
 
 const dexieObserver = useObservable(db.cloud.userInteraction)
 
@@ -141,6 +145,15 @@ const isAuthenticated = computed(
 )
 
 const showLoginModal = ref(false)
+function handleUserDropdown(val: string) {
+  if (val === 'logout') {
+    logout()
+  } else if (val === 'account') {
+    // Navigate to account page or show account modal (implement as needed)
+    // For now, just alert
+    alert('Account clicked')
+  }
+}
 </script>
 
 <template>
@@ -173,7 +186,22 @@ const showLoginModal = ref(false)
             </span>
           </button>
         </div>
-        <div class="flex justify-center p-3 text-xs">
+        <div class="flex justify-center text-xs gap-2 items-center">
+          <button
+            class="cursor-pointer size-8 rounded-full bg-white/20 flex justify-center items-center"
+            v-if="isAuthenticated"
+          >
+            <IconNotification class="size-4 text-white" />
+          </button>
+          <IconDropdown
+            v-if="isAuthenticated"
+            :options="[
+              { label: 'Account', value: 'account', icon: IconAccount, subText: user?.email },
+              { label: 'Logout', value: 'logout', icon: IconLogout },
+            ]"
+            @select="handleUserDropdown"
+          >
+          </IconDropdown>
           <button
             @click="
               () => {
@@ -181,13 +209,11 @@ const showLoginModal = ref(false)
                 showLoginModal = true
               }
             "
-            v-if="!isAuthenticated"
-            class="cursor-pointer"
+            v-else
+            class="cursor-pointer bg-white text-black p-2 px-4 rounded-lg"
           >
             Login
           </button>
-          <button @click="logout" v-else class="cursor-pointer">Logout</button>
-          <!-- {{ user }} -->
         </div>
       </div>
 

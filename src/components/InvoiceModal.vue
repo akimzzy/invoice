@@ -15,6 +15,9 @@ import IconDownload from './icons/IconDownload.vue'
 import IconDots from './icons/IconDots.vue'
 import IconWhatsApp from './icons/IconWhatsApp.vue'
 import IconClipboard from './icons/IconClipboard.vue'
+import html2pdf from 'html2pdf.js'
+import InvoiceA4Example from '@/components/InvoiceA4Example.vue'
+import { ref as vueRef, nextTick } from 'vue'
 
 import type { Invoice, Client, InvoiceItem } from '@/db'
 import { updateInvoiceItems, deleteInvoice, updateInvoice } from '@/db/invoiceActions.ts'
@@ -93,8 +96,37 @@ async function handleDeleteInvoice() {
 }
 
 const clientModal = ref(false)
-const showPreview = ref(false)
 const selectMode = ref(false)
+
+const pdfRef = vueRef<HTMLElement | null>(null)
+
+async function generatePDF() {
+  await nextTick()
+  const element = pdfRef.value
+  if (!element) return
+  const options = {
+    margin: [0, 0, 0, 0],
+    filename: `invoice-${props.invoice?.code || 'download'}.pdf`,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: {
+      scale: 2,
+      logging: false,
+      useCORS: true,
+    },
+    jsPDF: {
+      unit: 'mm',
+      format: 'a4',
+      orientation: 'portrait',
+      compress: true,
+    },
+  }
+  try {
+    const worker = html2pdf().set(options)
+    await worker.from(element).save()
+  } catch (error) {
+    console.error('Failed to generate PDF:', error)
+  }
+}
 </script>
 
 <template>
@@ -238,7 +270,7 @@ const selectMode = ref(false)
             <button
               class="text-xs size-8 rounded-lg bg-white/20 text-white hover:bg-white/40 cursor-pointer justify-center items-center p-2 hidden sm:flex"
               type="button"
-              @click="showPreview = true"
+              @click="generatePDF"
             >
               <IconDownload class="size-full" />
             </button>
@@ -307,7 +339,7 @@ const selectMode = ref(false)
                   type="button"
                   @click="
                     () => {
-                      showPreview = true
+                      generatePDF()
                       showMobileActions = false
                     }
                   "
@@ -349,6 +381,12 @@ const selectMode = ref(false)
         </div>
       </div>
     </transition>
+    <!-- Hidden PDF rendering area -->
+    <div style="position: absolute; left: -9999px; top: 0; width: 0; height: 0; overflow: hidden">
+      <div ref="pdfRef">
+        <InvoiceA4Example :invoice="props.invoice" :clients="props.clients" />
+      </div>
+    </div>
   </div>
 </template>
 

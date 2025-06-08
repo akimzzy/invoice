@@ -75,8 +75,8 @@ if (!import.meta.env.VITE_DEXIE_DB_URL) {
 db.cloud.configure({
   databaseUrl: import.meta.env.VITE_DEXIE_DB_URL,
   customLoginGui: true,
-  // requireAuth: true,
 })
+
 const currentUser = db.cloud.currentUser
 const login = () => db.cloud.login()
 const logout = () => db.cloud.logout()

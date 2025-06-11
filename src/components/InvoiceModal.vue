@@ -151,7 +151,7 @@ async function generatePDF() {
             class="text-xs text-white cursor-pointer hover:text-white/50 flex place-items-center p-5 sm:p-6"
             @click="() => emit('close')"
           >
-            <IconX class="size-4" />
+            <IconX class="size-5" />
           </button>
         </div>
 
@@ -251,13 +251,6 @@ async function generatePDF() {
                 <IconPerson class="size-3" />
               </template>
             </CustomDropdown>
-            <!-- <button
-            @click="clientModal = true"
-            class="text-[10px] text-white cursor-pointer hover:text-white/50 flex place-items-center gap-2"
-          >
-            <IconPlus class="size-2" />
-            <div class="w-max">Add client</div>
-          </button> -->
           </div>
           <div class="w-full sm:w-auto flex justify-end gap-2">
             <button

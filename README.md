@@ -1,6 +1,18 @@
-# .
+# Invoice App
 
-This template should help get you started developing with Vue 3 in Vite.
+A modern invoicing app built with Vue 3 and Vite, featuring advanced invoice management, PDF/JPG export, cloud sync, and more.
+
+## 🚀 Usage Instructions
+
+- **Creating Invoices**: Click the "+" button on the dashboard to open the invoice modal. Fill in client details, items, and totals.
+- **Exporting**: In the invoice modal, use the download buttons to export as PDF or JPG.
+- **Managing Clients**: Navigate to the Clients tab to add or edit client information.
+- **Cloud Sync**: Use the settings dropdown (gear icon) to migrate or sync your data with the cloud.
+- **Authentication**: Click "Login" to access your account and enable cloud features.
+
+Screenshots and detailed usage examples coming soon!
+
+---
 
 ## Recommended IDE Setup
 

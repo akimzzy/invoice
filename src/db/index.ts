@@ -44,11 +44,6 @@ const LocalDB = new Dexie('InvoiceAppDB') as Dexie & {
   receipts: EntityTable<Receipt, 'id'>
 }
 
-// LocalDB.version(1).stores({
-//   clients: '@id, name',
-//   invoices: '@id, code, clientId, status, dueDate, issueDate',
-//   receipts: '@id, invoiceId, paymentDate',
-// })
 LocalDB.version(1).stores({
   clients: '++id, name',
   invoices: '++id, clientId, status, dueDate, issueDate',

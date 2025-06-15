@@ -1,7 +1,11 @@
 <template>
   <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
     <transition name="bottom-sheet-invoice" appear>
-      <ClientFormInner :client="client" @close="$emit('close')" />
+      <div
+        class="sm:rounded-3xl bg-[#18181b] w-full h-full max-h-full flex flex-col justify-end py-10 relative border border-white/10 sm:w-2xl max-w-2xl sm:h-[50rem] sm:max-h-[90vh] overflow-hidden"
+      >
+        <ClientFormInner :client="client" @close="$emit('close')" class="border-0 shadow-none" />
+      </div>
     </transition>
   </div>
 </template>

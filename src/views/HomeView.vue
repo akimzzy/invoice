@@ -23,6 +23,7 @@ import IconNotification from '../components/icons/IconNotification.vue'
 import IconDropdown from '../components/IconDropdown.vue'
 import IconLogout from '../components/icons/IconLogout.vue'
 import IconAccount from '../components/icons/IconPerson.vue'
+import AccountsModal from '../components/AccountsModal.vue'
 
 const dexieObserver = useObservable(db.cloud.userInteraction)
 
@@ -145,13 +146,12 @@ const isAuthenticated = computed(
 )
 
 const showLoginModal = ref(false)
+const showAccountsModal = ref(false)
 function handleUserDropdown(val: string) {
   if (val === 'logout') {
     logout()
   } else if (val === 'account') {
-    // Navigate to account page or show account modal (implement as needed)
-    // For now, just alert
-    alert('Account clicked')
+    showAccountsModal.value = true
   }
 }
 </script>
@@ -371,6 +371,7 @@ function handleUserDropdown(val: string) {
     </div>
   </main>
 
+  <AccountsModal v-if="showAccountsModal" @close="showAccountsModal = false" />
   <InvoiceModal
     v-if="showInvoiceModal && selectedInvoice"
     :invoice="selectedInvoice"

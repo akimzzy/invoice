@@ -1,16 +1,22 @@
 <template>
   <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
     <transition name="bottom-sheet-invoice" appear>
-      <div class="w-full sm:w-2xl max-w-2xl" :class="{ 'pointer-events-none': isLoading }">
+      <div
+        class="sm:rounded-3xl bg-[#18181b] w-full h-full max-h-full flex flex-col justify-between py-10 relative border border-white/10 sm:w-2xl max-w-2xl sm:h-[50rem] sm:max-h-[90vh] overflow-hidden"
+        :class="{ 'pointer-events-none': isLoading }"
+      >
+        <div class="p-8">
+          <h1 class="font-semibold text-2xl">Log in for cloud features</h1>
+          <p class="text-sm text-white/50 mt-2">
+            Sync invoices, manage companies, accept payments, and share links — all in one place.
+          </p>
+        </div>
         <div v-if="!props.observer" class="flex justify-center items-center h-full">
           <LoadingSpinner />
         </div>
         <div v-else-if="props.observer?.type === 'email'">
-          <form
-            @submit.prevent="submitEmail"
-            class="bg-[#18181b] rounded-3xl shadow-2xl p-8 flex flex-col gap-6 border border-white/10 text-xs"
-          >
-            <h2 class="text-lg font-semibold text-white mb-2">Login</h2>
+          <form @submit.prevent="submitEmail" class="p-8 flex flex-col text-xs">
+            <h2 class="text-lg font-semibold text-white mb-2">Email</h2>
             <input
               v-model="email"
               type="email"
@@ -18,7 +24,7 @@
               class="w-full border border-white/30 bg-transparent rounded-lg p-3 text-white placeholder-white/40 focus:outline-none focus:border-white/30"
               placeholder="Enter your email"
             />
-            <div class="flex gap-2 justify-end" :class="{ 'opacity-25': isLoading }">
+            <div class="flex gap-2 mt-6 justify-end" :class="{ 'opacity-25': isLoading }">
               <button
                 type="button"
                 class="px-4 py-2 rounded-lg bg-white/10 text-white/70 hover:bg-white/20 text-xs cursor-pointer"
@@ -41,14 +47,9 @@
           </form>
         </div>
         <div v-else-if="props.observer?.type === 'otp'">
-          <form
-            @submit.prevent="submitOtp"
-            class="bg-[#18181b] rounded-3xl shadow-2xl p-8 flex flex-col gap-6 border border-white/10 text-xs"
-          >
-            <div class="flex items-center justify-between mb-2">
-              <h2 class="text-lg font-semibold text-white">Enter OTP</h2>
-              <span></span>
-            </div>
+          <form @submit.prevent="submitOtp" class="p-8 flex flex-col text-xs">
+            <h2 class="text-lg font-semibold text-white mb-2">Enter OTP</h2>
+
             <input
               v-model="otp"
               type="text"
@@ -56,28 +57,28 @@
               class="w-full border border-white/30 bg-transparent rounded-lg p-3 text-white placeholder-white/40 focus:outline-none focus:border-white/30 tracking-widest text-center"
               placeholder="Enter OTP"
             />
-            <div class="flex gap-2 justify-end">
-              <div class="flex gap-2">
-                <button
-                  type="button"
-                  class="px-4 py-2 rounded-lg bg-white/10 text-white/70 hover:bg-white/20 text-xs cursor-pointer"
-                  @click="
-                    () => {
-                      observer?.onCancel()
-                      $emit('close')
-                    }
-                  "
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  class="px-4 py-2 rounded-lg bg-white/20 text-white font-semibold hover:bg-white/30 text-xs cursor-pointer"
-                >
-                  Confirm
-                </button>
-              </div>
+
+            <div class="flex gap-2 mt-6 justify-end">
+              <button
+                type="button"
+                class="px-4 py-2 rounded-lg bg-white/10 text-white/70 hover:bg-white/20 text-xs cursor-pointer"
+                @click="
+                  () => {
+                    observer?.onCancel()
+                    $emit('close')
+                  }
+                "
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                class="px-4 py-2 rounded-lg bg-white/20 text-white font-semibold hover:bg-white/30 text-xs cursor-pointer"
+              >
+                Confirm
+              </button>
             </div>
+
             <div v-if="otpError" class="text-xs text-red-400 mt-2">{{ otpError }}</div>
           </form>
         </div>

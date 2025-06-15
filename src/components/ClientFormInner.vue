@@ -18,7 +18,7 @@
           <input
             v-model="form.name"
             required
-            class="w-full border border-white/30 bg-transparent rounded-lg p-3 text-white placeholder-white/40 focus:outline-none focus:border-white/30"
+            class="w-full bg-white/5 border border-white/10 rounded-lg px-2 py-2 text-white focus:outline-none focus:border-white/30"
             placeholder="Client name"
           />
         </div>
@@ -26,13 +26,13 @@
         <div class="flex-1 flex flex-col sm:flex-row sm:items-center gap-4">
           <input
             v-model="form.phone"
-            class="w-full border border-white/30 bg-transparent rounded-lg p-3 text-white placeholder-white/40 focus:outline-none focus:border-white/30"
+            class="w-full bg-white/5 border border-white/10 rounded-lg px-2 py-2 text-white focus:outline-none focus:border-white/30"
             placeholder="WhatsApp Number (optional)"
           />
           <input
             v-model="form.email"
             type="email"
-            class="w-full border border-white/30 bg-transparent rounded-lg p-3 text-white placeholder-white/40 focus:outline-none focus:border-white/30"
+            class="w-full bg-white/5 border border-white/10 rounded-lg px-2 py-2 text-white focus:outline-none focus:border-white/30"
             placeholder="Email (optional)"
           />
         </div>

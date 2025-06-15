@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, toRaw } from 'vue'
+import { ref, toRaw, computed, nextTick } from 'vue'
 import IconTrash from './icons/IconTrash.vue'
 import IconX from './icons/IconX.vue'
 import CustomCheckbox from './CustomCheckbox.vue'
@@ -15,15 +15,35 @@ import IconDownload from './icons/IconDownload.vue'
 import IconDots from './icons/IconDots.vue'
 import IconWhatsApp from './icons/IconWhatsApp.vue'
 import IconClipboard from './icons/IconClipboard.vue'
+import IconList from './icons/IconList.vue'
+import IconGear from './icons/IconGear.vue'
+import IconNote from './icons/IconNote.vue'
 import html2pdf from 'html2pdf.js'
 import InvoiceA4Example from '@/components/InvoiceA4Example.vue'
-import { ref as vueRef, nextTick } from 'vue'
+import SettingsPanel from '@/components/SettingsPanel.vue'
+import NotePanel from '@/components/NotePanel.vue'
+
+import { useRoute, useRouter } from 'vue-router'
 
 import type { Invoice, Client, InvoiceItem } from '@/db'
 import { updateInvoiceItems, deleteInvoice, updateInvoice } from '@/db/invoiceActions.ts'
 
 const props = defineProps<{ invoice: Invoice; clients: Client[] }>()
 const emit = defineEmits(['close'])
+
+const route = useRoute()
+const router = useRouter()
+
+const tabs = computed(() => [
+  { label: 'Items', query: 'items', icon: IconList, total: props.invoice?.items?.length },
+  { label: 'Note', query: 'note', icon: IconNote },
+  { label: 'Settings', query: 'settings', icon: IconGear },
+])
+
+const invoiceTab = computed(() => route.query['invoice-tab'])
+const isItemsTab = computed(() => invoiceTab.value === 'items')
+const isNoteTab = computed(() => invoiceTab.value === 'note')
+const isSettingsTab = computed(() => invoiceTab.value === 'settings')
 
 const markedItems = ref<number[]>([])
 const editingIdx = ref<number | null>(null)
@@ -98,7 +118,7 @@ async function handleDeleteInvoice() {
 const clientModal = ref(false)
 const selectMode = ref(false)
 
-const pdfRef = vueRef<HTMLElement | null>(null)
+const pdfRef = ref<HTMLElement | null>(null)
 
 async function generatePDF() {
   await nextTick()
@@ -130,10 +150,7 @@ async function generatePDF() {
 </script>
 
 <template>
-  <div
-    class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
-    @click.self="() => emit('close')"
-  >
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
     <transition name="bottom-sheet-invoice" appear>
       <div
         class="sm:rounded-3xl bg-[#18181b] w-full h-full max-h-full flex flex-col relative border border-white/10 sm:w-2xl max-w-2xl sm:h-[50rem] sm:max-h-[90vh] overflow-hidden"
@@ -141,25 +158,42 @@ async function generatePDF() {
         <div
           class="rounded-t-3xl text-white/30 border-b border-b-white/10 w-full bg-[#18181b] flex items-center justify-between"
         >
-          <div class="flex p-5 items-center gap-2">
+          <div class="flex p-4 items-center gap-2">
             <div class="text-lg font-semibold text-white">Invoice #{{ props.invoice?.code }}</div>
             <span class="text-[10px]">
               {{ formatDate(props.invoice?.issueDate, 'EEE, dd MMM yyyy | HH:mm') }}
             </span>
           </div>
           <button
-            class="text-xs text-white cursor-pointer hover:text-white/50 flex place-items-center p-5 sm:p-6"
+            class="text-[10px] text-white cursor-pointer hover:text-white/50 flex place-items-center p-4 sm:p-4"
             @click="() => emit('close')"
           >
             <IconX class="size-5" />
           </button>
         </div>
 
-        <div class="p-6 flex-1 flex flex-col overflow-y-auto">
-          <div class="mb-2 flex-1 flex flex-col min-h-0">
-            <div class="flex items-center justify-between">
-              <div class="text-xs text-white/70">Items ({{ props.invoice?.items?.length }})</div>
-
+        <div class="p-4 pt-0 flex-1 flex flex-col overflow-y-auto">
+          <div class="flex-1 flex flex-col min-h-0">
+            <div class="flex items-center justify-between mb-4">
+              <div class="text-xs flex gap-2">
+                <button
+                  v-for="tab in tabs"
+                  :key="tab.label"
+                  class="text-[10px] py-1 px-2 rounded-b-lg cursor-pointer border border-t-0 flex"
+                  :class="
+                    invoiceTab === tab.query
+                      ? 'bg-white text-black border-transparent'
+                      : 'text-white/60 bg-white/5 border-transparent'
+                  "
+                  @click="router.push({ query: { ...route.query, 'invoice-tab': tab.query } })"
+                >
+                  <component v-if="tab.icon" :is="tab.icon" class="size-3 mr-2" />
+                  {{ tab.label }}
+                  <span class="font-black ml-2" v-if="tab.total">{{ tab.total }}</span>
+                </button>
+              </div>
+            </div>
+            <div class="flex items-center justify-end" v-if="isItemsTab">
               <div class="flex items-center gap-2">
                 <button
                   v-if="selectMode"
@@ -183,7 +217,21 @@ async function generatePDF() {
                 </button>
               </div>
             </div>
-            <ul class="flex flex-col divide-y mt-2 sm:mt-4 divide-white/10 overflow-y-auto flex-1">
+            <SettingsPanel
+              v-if="isSettingsTab"
+              :invoice="props.invoice"
+              :update-invoice="updateInvoice"
+            />
+            <NotePanel
+              v-else-if="isNoteTab"
+              :note="props.invoice.note"
+              @update:note="(val) => updateInvoice(props.invoice.id, { note: val })"
+            />
+
+            <ul
+              class="flex flex-col divide-y mt-2 sm:mt-4 divide-white/10 overflow-y-auto flex-1"
+              v-else-if="isItemsTab"
+            >
               <li
                 v-for="(item, idx) in props.invoice?.items"
                 :key="item.description + idx"
@@ -214,21 +262,23 @@ async function generatePDF() {
               </li>
             </ul>
             <button
-              class="text-[10px] p-3 bg- text-white/70 rounded-xl cursor-pointer mt-4 w-full flex gap-2 justify-center items-center"
+              class="text-[10px] p-3 bg- text-white/70 rounded-xl cursor-pointer w-full flex gap-2 justify-center items-center"
               type="button"
               @click="addInvoiceItem"
-              v-if="props.invoice"
+              v-if="props.invoice && isItemsTab"
             >
               <IconPlus class="size-2" /> Add Item
             </button>
           </div>
-          <div class="flex justify-between items-center mt-4">
+          <div class="flex justify-between items-center mt-4" v-if="props.invoice && isItemsTab">
             <span class="text-xs text-white/70">Total</span>
             <span class="text-lg font-bold text-white"
               >₦{{ props.invoice?.total?.toLocaleString() }}</span
             >
           </div>
         </div>
+
+        <!-- Footer -->
         <div
           class="flex gap-2 p-6 pb-10 sm:pb-6 justify-between border-t items-center border-white/10"
         >
@@ -321,7 +371,7 @@ async function generatePDF() {
               <div class="flex justify-end mb-4">
                 <button
                   class="text-white/50 hover:text-white/60 text-2xl cursor-pointer p-2 size-8"
-                  @click="$emit('close')"
+                  @click="showMobileActions = false"
                 >
                   <IconX class="size-full" />
                 </button>
@@ -377,7 +427,7 @@ async function generatePDF() {
     <!-- Hidden PDF rendering area -->
     <div style="position: absolute; left: -9999px; top: 0; width: 0; height: 0; overflow: hidden">
       <div ref="pdfRef">
-        <InvoiceA4Example :invoice="props.invoice" :clients="props.clients" />
+        <InvoiceA4Example :invoice="props.invoice" />
       </div>
     </div>
   </div>

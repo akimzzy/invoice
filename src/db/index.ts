@@ -40,6 +40,7 @@ interface Invoice {
   paymentAccountId?: string
   companyId?: string
   readonlyInvoiceId?: string
+  enableLiveUpdate?: boolean
 }
 
 interface Company {

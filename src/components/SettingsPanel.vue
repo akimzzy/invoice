@@ -61,7 +61,7 @@
       </div>
     </section>
     <!-- Payment Section -->
-    <section class="pt-8">
+    <!-- <section class="pt-8">
       <div class="flex justify-between items-start">
         <div>
           <div class="flex items-center justify-between mb-1">
@@ -93,13 +93,8 @@
           @change="updateInvoice(invoice.id, { paymentAccount: invoice.paymentAccount })"
         />
       </div>
-    </section>
-    <!-- <AddEditCompany
-      :showCompanyModal="showCompanyModal"
-      :editingCompany="editingCompany"
-      :onCompanyLogoChange="onCompanyLogoChange"
-      :closeCompanyModal="closeCompanyModal"
-    /> -->
+    </section> -->
+
     <AllCompanies
       v-model:show-all-companies-modal="showSelectCompanyModal"
       :select-mode="true"
@@ -130,7 +125,7 @@ function updateInvoiceCompany(id?: string) {
 
 const showSelectCompanyModal = ref(false)
 
-const enableLiveUpdate = ref<boolean>(props.invoice.realtimeShare || false)
+const enableLiveUpdate = ref<boolean>(props.invoice.enableLiveUpdate || false)
 function updateEnableLiveUpdate(value: boolean) {
   enableLiveUpdate.value = value
   // updateInvoice(invoice.id, { realtimeShare: enableLiveUpdate.value })
@@ -142,34 +137,30 @@ const company = asyncComputed(async () => {
   }
 }, undefined)
 
-const enablePayment = ref<boolean>(props.invoice.realtimeShare || false)
-function updateEnablePayment(value: boolean) {
-  enablePayment.value = value
-  // updateInvoice(invoice.id, { realtimeShare: enableLiveUpdate.value })
-}
+// const enablePayment = ref<boolean>(props.invoice.realtimeShare || false)
+// function updateEnablePayment(value: boolean) {
+//   enablePayment.value = value
+//   // updateInvoice(invoice.id, { realtimeShare: enableLiveUpdate.value })
+// }
 
-function handleLogoUpload(event: Event) {
-  const input = event.target as HTMLInputElement
-  if (!input.files || !input.files[0]) return
-  const file = input.files[0]
-  if (!file.type.startsWith('image/')) {
-    alert('Please select a valid image file.')
-    return
-  }
-  if (file.size > 1024 * 1024) {
-    alert('Logo image must be less than 1MB.')
-    return
-  }
-  const reader = new FileReader()
-  reader.onload = (e) => {
-    const logo = e.target?.result as string
-    console.log(logo)
-    // emit('updateInvoice', invoice.id, { companyId: '' })
-  }
-  reader.readAsDataURL(file)
-}
-
-function removeLogo() {
-  updateInvoice(invoice.id, { companyInfo: { ...invoice.companyInfo, logo: undefined } })
-}
+// function handleLogoUpload(event: Event) {
+//   const input = event.target as HTMLInputElement
+//   if (!input.files || !input.files[0]) return
+//   const file = input.files[0]
+//   if (!file.type.startsWith('image/')) {
+//     alert('Please select a valid image file.')
+//     return
+//   }
+//   if (file.size > 1024 * 1024) {
+//     alert('Logo image must be less than 1MB.')
+//     return
+//   }
+//   const reader = new FileReader()
+//   reader.onload = (e) => {
+//     const logo = e.target?.result as string
+//     console.log(logo)
+//     // emit('updateInvoice', invoice.id, { companyId: '' })
+//   }
+//   reader.readAsDataURL(file)
+// }
 </script>

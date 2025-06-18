@@ -1,7 +1,6 @@
 // src/db.ts
 import Dexie, { type EntityTable } from 'dexie'
 import dexieCloud from 'dexie-cloud-addon'
-import { generateUniqueInvoiceCode } from './invoiceActions'
 
 // --- Entity Interfaces ---
 interface Client {
@@ -17,6 +16,15 @@ interface InvoiceItem {
   rate: number
 }
 
+interface ReadonlyInvoice {
+  id: string
+  invoiceId: string
+  invoiceSnapShot: Invoice
+  autoUpdate: boolean
+  updatedDate: string
+  createdDate: string
+}
+
 interface Invoice {
   id: string
   code: string
@@ -25,42 +33,45 @@ interface Invoice {
   total: number
   status: 'paid' | 'unpaid'
   issueDate: string
+  updatedDate: string
   dueDate?: string
   receiptId?: number
+  note?: string
+  paymentAccountId?: string
+  companyId?: string
+  readonlyInvoiceId?: string
 }
 
-interface Receipt {
+interface Company {
   id: string
-  invoiceId: string
-  paymentDate: string
-  amountPaid: number
-  paymentMethod: string
+  name: string
+  logoUrl?: string
+  email?: string
+  phone?: string
 }
 
-// --- Local DB (offline copy) ---
-const LocalDB = new Dexie('InvoiceAppDB') as Dexie & {
-  clients: EntityTable<Client, 'id'>
-  invoices: EntityTable<Invoice, 'id'>
-  receipts: EntityTable<Receipt, 'id'>
+interface PaymentAccount {
+  id: string
+  bank: string
+  accountNumber: string
+  accountName: string
 }
-
-LocalDB.version(1).stores({
-  clients: '++id, name',
-  invoices: '++id, clientId, status, dueDate, issueDate',
-  receipts: '++id, invoiceId, paymentDate',
-})
 
 // --- Cloud DB ---
 const db = new Dexie('InvoiceAppDB', { addons: [dexieCloud] }) as Dexie & {
   clients: EntityTable<Client, 'id'>
   invoices: EntityTable<Invoice, 'id'>
-  receipts: EntityTable<Receipt, 'id'>
+  paymentAccounts: EntityTable<PaymentAccount, 'id'>
+  companies: EntityTable<Company, 'id'>
+  readonlyInvoices: EntityTable<ReadonlyInvoice, 'id'>
 }
 
-db.version(1).stores({
+db.version(2).stores({
   clients: '@id, name',
-  invoices: '@id, code, clientId, status, dueDate, issueDate',
-  receipts: '@id, invoiceId, paymentDate',
+  invoices: '@id, code, clientId, status, issueDate, updatedDate, dueDate',
+  paymentAccounts: '@id, accountNumber',
+  companies: '@id, name, email, phone',
+  readonlyInvoices: '@id, invoiceId',
 })
 
 if (!import.meta.env.VITE_DEXIE_DB_URL) {
@@ -76,66 +87,6 @@ const currentUser = db.cloud.currentUser
 const login = () => db.cloud.login()
 const logout = () => db.cloud.logout()
 
-// --- Migration Routine ---
-async function migrateLocalDataToCloud(): Promise<void> {
-  const MIGRATION_FLAG = 'cloudMigrationDoneV1'
-  if (localStorage.getItem(MIGRATION_FLAG)) return
-
-  try {
-    const [localClients, localInvoices, localReceipts] = await Promise.all([
-      LocalDB.clients.toArray(),
-      LocalDB.invoices.toArray(),
-      LocalDB.receipts.toArray(),
-    ])
-
-    // Exit early if all local tables are empty (no migration needed)
-    if (
-      (!localClients || localClients.length === 0) &&
-      (!localInvoices || localInvoices.length === 0) &&
-      (!localReceipts || localReceipts.length === 0)
-    ) {
-      localStorage.setItem(MIGRATION_FLAG, 'true')
-      console.info('✅ No local data to migrate. Migration marked as complete.')
-      return
-    }
-
-    // Prepare invoices: ensure 'code' exists and handle 'id' for cloud
-    const preparedInvoices = await Promise.all(
-      localInvoices.map(async (inv) => {
-        let code = inv.code
-        if (!code) {
-          code = await generateUniqueInvoiceCode()
-        }
-        // For Dexie Cloud, '@id' is auto-generated if not present, so remove 'id' if not string or not present
-        const id = inv.id
-        if (!id || typeof id !== 'string' || id.startsWith('++')) {
-          // If id is invalid, remove it so it won't be included in the object
-          const { id: _, ...rest } = inv
-          return { ...rest, code }
-        }
-        return { ...inv, code, id }
-      }),
-    )
-
-    // Upsert using bulkPut (replaces existing items with same id)
-    await Promise.all([
-      db.clients.bulkPut(localClients),
-      db.invoices.bulkPut(preparedInvoices),
-      db.receipts.bulkPut(localReceipts),
-    ])
-
-    localStorage.setItem(MIGRATION_FLAG, 'true')
-    console.info('✅ Local data successfully migrated to Dexie Cloud')
-    // Clear all data from LocalDB after successful migration
-    await Promise.all([LocalDB.clients.clear(), LocalDB.invoices.clear(), LocalDB.receipts.clear()])
-  } catch (err) {
-    console.error('❌ Cloud migration failed:', err)
-  }
-}
-
-// --- Run Migration on Startup ---
-migrateLocalDataToCloud()
-
 // --- Export ---
 export { db, currentUser, login, logout }
-export type { Client, Invoice, Receipt, InvoiceItem }
+export type { Client, Invoice, InvoiceItem, Company, PaymentAccount, ReadonlyInvoice }

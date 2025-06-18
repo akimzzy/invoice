@@ -22,7 +22,6 @@ import IconArrowRight from '../components/icons/IconArrowRight.vue'
 import IconNotification from '../components/icons/IconNotification.vue'
 import IconDropdown from '../components/IconDropdown.vue'
 import IconLogout from '../components/icons/IconLogout.vue'
-import IconAccount from '../components/icons/IconPerson.vue'
 import AccountsModal from '../components/AccountsModal.vue'
 
 const dexieObserver = useObservable(db.cloud.userInteraction)
@@ -33,6 +32,7 @@ async function addInvoice() {
     items: [{ description: '', quantity: 1, rate: 0 }],
     total: 0,
     issueDate: new Date().toISOString(),
+    updatedDate: new Date().toISOString(),
   })
 
   openInvoiceModal(response)
@@ -44,6 +44,8 @@ const router = useRouter()
 const activeTab = computed<'invoices' | 'clients'>(() =>
   route.query.tab === 'clients' ? 'clients' : 'invoices',
 )
+// check it the key 'account' is in the query
+const accountSettings = computed<boolean>(() => 'account' in route.query)
 
 function changeTab(tab: 'invoices' | 'clients') {
   const query = { ...route.query, tab, client: undefined, invoice: undefined }
@@ -94,8 +96,6 @@ const selectedInvoice = computed(
   () => invoices.value?.find((inv) => inv.id === selectedInvoiceId.value) ?? null,
 )
 
-// Removed markedItems, editingIdx, editingDescription, deleteMarkedItems, addInvoiceItem
-
 const openInvoiceModal = (invoiceId: string) => {
   selectedInvoiceId.value = invoiceId
   showInvoiceModal.value = true
@@ -107,6 +107,7 @@ const closeInvoiceModal = () => {
   selectedInvoiceId.value = null
   const query = { ...route.query }
   delete query.invoice
+  delete query['invoice-tab']
   router.replace({ query })
 }
 
@@ -146,12 +147,15 @@ const isAuthenticated = computed(
 )
 
 const showLoginModal = ref(false)
-const showAccountsModal = ref(false)
+
+function closeAccountsModal() {
+  router.push({ query: { ...route.query, account: undefined } })
+}
 function handleUserDropdown(val: string) {
   if (val === 'logout') {
     logout()
   } else if (val === 'account') {
-    showAccountsModal.value = true
+    router.push({ query: { ...route.query, account: null } })
   }
 }
 </script>
@@ -196,7 +200,7 @@ function handleUserDropdown(val: string) {
           <IconDropdown
             v-if="isAuthenticated"
             :options="[
-              { label: 'Account', value: 'account', icon: IconAccount, subText: user?.email },
+              { label: 'Account', value: 'account', icon: IconPerson, subText: user?.email },
               { label: 'Logout', value: 'logout', icon: IconLogout },
             ]"
             @select="handleUserDropdown"
@@ -371,7 +375,7 @@ function handleUserDropdown(val: string) {
     </div>
   </main>
 
-  <AccountsModal v-if="showAccountsModal" @close="showAccountsModal = false" />
+  <AccountsModal v-if="accountSettings" @close="closeAccountsModal" />
   <InvoiceModal
     v-if="showInvoiceModal && selectedInvoice"
     :invoice="selectedInvoice"

@@ -41,7 +41,7 @@ const tabs = computed(() => [
 ])
 
 const invoiceTab = computed(() => route.query['invoice-tab'])
-const isItemsTab = computed(() => invoiceTab.value === 'items')
+const isItemsTab = computed(() => invoiceTab.value === 'items' || !invoiceTab.value)
 const isNoteTab = computed(() => invoiceTab.value === 'note')
 const isSettingsTab = computed(() => invoiceTab.value === 'settings')
 
@@ -181,7 +181,7 @@ async function generatePDF() {
                   :key="tab.label"
                   class="text-[10px] py-1 px-2 rounded-b-lg cursor-pointer border border-t-0 flex"
                   :class="
-                    invoiceTab === tab.query
+                    (invoiceTab || 'items') === tab.query
                       ? 'bg-white text-black border-transparent'
                       : 'text-white/60 bg-white/5 border-transparent'
                   "
@@ -220,12 +220,12 @@ async function generatePDF() {
             <SettingsPanel
               v-if="isSettingsTab"
               :invoice="props.invoice"
-              :update-invoice="updateInvoice"
+              @update-invoice="updateInvoice"
             />
             <NotePanel
               v-else-if="isNoteTab"
-              :note="props.invoice.note"
-              @update:note="(val) => updateInvoice(props.invoice.id, { note: val })"
+              :note="props.invoice.note || ''"
+              @update:note="(val: string) => updateInvoice(props.invoice.id, { note: val })"
             />
 
             <ul

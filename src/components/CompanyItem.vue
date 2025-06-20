@@ -1,5 +1,9 @@
 <template>
-  <div class="flex justify-between items-center hover:bg-white/5 p-2 rounded-xl">
+  <div
+    class="flex justify-between items-center hover:bg-white/2 p-2 rounded-xl"
+    @mouseenter="isHovered = true"
+    @mouseleave="isHovered = false"
+  >
     <div class="flex gap-2 items-center">
       <div
         class="flex flex-col items-center justify-center w-10 h-10 border border-white/20 rounded-lg cursor-pointer bg-white/5 hover:bg-white/10 text-white/60 text-[10px]"
@@ -38,20 +42,36 @@
         >
           selected
         </button>
+
         <button
           v-if="!selectMode"
           @click="emit('editCompany')"
-          class="text-[10px] rounded-lg size-7 flex justify-center items-center bg-white/20 text-white hover:bg-white/40 cursor-pointer"
+          class="rounded-lg size-7 justify-center items-center bg-white/10 text-white hover:bg-white/40 cursor-pointer sm:flex hidden opacity-0 transition-opacity"
+          :class="isHovered ? 'opacity-100' : ''"
         >
           <IconPen class="size-3" />
         </button>
         <button
           v-if="!selectMode"
           @click="emit('removeCompany')"
-          class="text-[10px] rounded-lg size-7 flex items-center justify-center bg-red-600 text-white hover:bg-red-700 cursor-pointer"
+          class="rounded-lg size-7 justify-center items-center bg-white/10 text-white hover:bg-white/40 cursor-pointer sm:flex hidden opacity-0 transition-opacity"
+          :class="isHovered ? 'opacity-100' : ''"
         >
           <IconTrash class="size-3" />
         </button>
+        <IconDropdown
+          v-if="!selectMode"
+          class="sm:hidden"
+          :options="[
+            { label: 'Edit', value: 'edit', icon: IconPen },
+            { label: 'Delete', value: 'edit', icon: IconTrash },
+          ]"
+          @select="handleComapnyItemDropdodwn"
+        >
+          <template #icon>
+            <IconDots class="size-4 text-white" />
+          </template>
+        </IconDropdown>
       </div>
     </slot>
   </div>
@@ -61,6 +81,9 @@
 import type { Company } from '@/db'
 import IconPen from './icons/IconPen.vue'
 import IconTrash from './icons/IconTrash.vue'
+import IconDropdown from './IconDropdown.vue'
+import IconDots from './icons/IconDots.vue'
+import { ref } from 'vue'
 
 defineProps<{
   company: Company
@@ -72,4 +95,19 @@ const emit = defineEmits<{
   removeCompany: []
   selectCompany: []
 }>()
+
+const isHovered = ref(false)
+
+function handleComapnyItemDropdodwn(value: string) {
+  switch (value) {
+    case 'edit':
+      emit('editCompany')
+      break
+    case 'delete':
+      emit('removeCompany')
+      break
+    default:
+      break
+  }
+}
 </script>

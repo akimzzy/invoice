@@ -11,7 +11,7 @@
             @click="closeAccountModal"
             class="text-white/60 hover:text-white text-xl cursor-pointer"
           >
-            &times;
+            <IconX class="size-5" />
           </button>
         </div>
         <div class="flex flex-col gap-10 p-6 overflow-y-auto">
@@ -78,14 +78,14 @@
             </ul>
             <div
               class="flex justify-start pt-3 mt-4 border-t border-white/10 border-dashed"
-              v-if="companies?.length"
+              v-if="(companies?.length ?? 0) - 3 > 0"
             >
               <button
                 @click="showAllCompaniesModal = true"
                 class="text-[10px] rounded-lg text-white hover:text-white/50 cursor-pointer flex gap-2"
               >
-                See {{ companies?.length - 3 }} more
-                {{ companies?.length - 3 > 1 ? 'companies' : 'company' }}
+                See {{ (companies?.length ?? 0) - 3 }} more
+                {{ (companies?.length ?? 0) - 3 > 1 ? 'companies' : 'company' }}
                 <IconArrowRight class="size-4" />
               </button>
             </div>
@@ -105,8 +105,7 @@
               v-model:showAllCompaniesModal="showAllCompaniesModal"
             />
           </section>
-          <section>
-            <!-- Payment Details List -->
+          <!-- <section>
             <div>
               <div class="flex items-center justify-between mb-4">
                 <span class="font-semibold text-sm">Payment Accounts</span>
@@ -117,9 +116,7 @@
                   Add Payment Account
                 </button>
               </div>
-              <!-- <div class="text-white/60 text-[10px] mb-4">
-                Manage your payment accounts. Add, edit, or remove payment details as needed.
-              </div> -->
+
               <div
                 v-if="payments.length === 0"
                 class="text-white/40 text-xs py-4 flex flex-col items-center gap-2"
@@ -154,7 +151,6 @@
               </div>
             </div>
 
-            <!-- Add/Edit Payment Modal -->
             <AddEditPayment
               :showPaymentModal="showPaymentModal"
               :editingPayment="editingPayment"
@@ -163,14 +159,13 @@
               :savePayment="savePayment"
             />
 
-            <!-- All Payments Modal -->
             <AllPaymentDetails
               :payments="payments"
               :editPayment="editPayment"
               :removePayment="removePayment"
               v-model:showAllPaymentsModal="showAllPaymentsModal"
             />
-          </section>
+          </section> -->
         </div>
       </div>
     </transition>
@@ -183,15 +178,16 @@ import { from, useObservable } from '@vueuse/rxjs'
 import { ref, reactive } from 'vue'
 import AllCompanies from './AllCompanies.vue'
 import AddEditCompany from './AddEditCompany.vue'
-import AddEditPayment from './AddEditPayment.vue'
-import AllPaymentDetails from './AllPaymentDetails.vue'
+// import AddEditPayment from './AddEditPayment.vue'
+// import AllPaymentDetails from './AllPaymentDetails.vue'
 import CompanyItem from './CompanyItem.vue'
-import PaymentAccountItem from './PaymentAccountItem.vue'
+// import PaymentAccountItem from './PaymentAccountItem.vue'
 import { formatDate } from 'date-fns'
 
 import IconArrowRight from './icons/IconArrowRight.vue'
 import { liveQuery } from 'dexie'
 import { fetchAllCompanies, deleteCompany } from '@/db/companyActions'
+import IconX from './icons/IconX.vue'
 
 const emit = defineEmits(['close'])
 
@@ -211,7 +207,7 @@ const account = reactive({
 const companies = useObservable<Company[]>(from(liveQuery(() => fetchAllCompanies())))
 
 const showAllCompaniesModal = ref(false)
-const showAllPaymentsModal = ref(false)
+// const showAllPaymentsModal = ref(false)
 const showCompanyModal = ref(false)
 const editingCompany = ref<Company | undefined>(undefined)
 
@@ -243,68 +239,68 @@ function closeCompanyModal() {
 }
 
 // Dummy payments (at least 4)
-const dummyPayments = [
-  { id: 1, bank: 'Bank of America', accountNumber: '123456789', accountName: 'Acme Corp' },
-  { id: 2, bank: 'Chase', accountNumber: '987654321', accountName: 'Globex Inc' },
-  { id: 3, bank: 'Wells Fargo', accountNumber: '555555555', accountName: 'Soylent LLC' },
-  { id: 4, bank: 'Citibank', accountNumber: '111222333', accountName: 'Initech' },
-]
-const payments = ref([...dummyPayments])
-let nextPaymentId = 5
-const showPaymentModal = ref(false)
-const editingPayment = ref<{
-  id: number
-  bank: string
-  accountNumber: string
-  accountName: string
-} | null>(null)
-const paymentForm = reactive({ bank: '', accountNumber: '', accountName: '' })
+// const dummyPayments = [
+//   { id: 1, bank: 'Bank of America', accountNumber: '123456789', accountName: 'Acme Corp' },
+//   { id: 2, bank: 'Chase', accountNumber: '987654321', accountName: 'Globex Inc' },
+//   { id: 3, bank: 'Wells Fargo', accountNumber: '555555555', accountName: 'Soylent LLC' },
+//   { id: 4, bank: 'Citibank', accountNumber: '111222333', accountName: 'Initech' },
+// ]
+// const payments = ref([...dummyPayments])
+// let nextPaymentId = 5
+// const showPaymentModal = ref(false)
+// const editingPayment = ref<{
+//   id: number
+//   bank: string
+//   accountNumber: string
+//   accountName: string
+// } | null>(null)
+// const paymentForm = reactive({ bank: '', accountNumber: '', accountName: '' })
 
-function openAddPayment() {
-  editingPayment.value = null
-  paymentForm.bank = ''
-  paymentForm.accountNumber = ''
-  paymentForm.accountName = ''
-  showPaymentModal.value = true
-}
+// function openAddPayment() {
+//   editingPayment.value = null
+//   paymentForm.bank = ''
+//   paymentForm.accountNumber = ''
+//   paymentForm.accountName = ''
+//   showPaymentModal.value = true
+// }
 
-function editPayment(payment: {
-  id: number
-  bank: string
-  accountNumber: string
-  accountName: string
-}) {
-  editingPayment.value = payment
-  paymentForm.bank = payment.bank
-  paymentForm.accountNumber = payment.accountNumber
-  paymentForm.accountName = payment.accountName
-  showPaymentModal.value = true
-}
+// function editPayment(payment: {
+//   id: number
+//   bank: string
+//   accountNumber: string
+//   accountName: string
+// }) {
+//   editingPayment.value = payment
+//   paymentForm.bank = payment.bank
+//   paymentForm.accountNumber = payment.accountNumber
+//   paymentForm.accountName = payment.accountName
+//   showPaymentModal.value = true
+// }
 
-function savePayment() {
-  if (!paymentForm.bank || !paymentForm.accountNumber || !paymentForm.accountName) return
-  if (editingPayment.value) {
-    const idx = payments.value.findIndex((p) => p.id === editingPayment.value!.id)
-    if (idx !== -1) {
-      payments.value[idx] = { ...editingPayment.value, ...paymentForm }
-    }
-  } else {
-    payments.value.push({ id: nextPaymentId++, ...paymentForm })
-  }
-  closePaymentModal()
-}
+// function savePayment() {
+//   if (!paymentForm.bank || !paymentForm.accountNumber || !paymentForm.accountName) return
+//   if (editingPayment.value) {
+//     const idx = payments.value.findIndex((p) => p.id === editingPayment.value!.id)
+//     if (idx !== -1) {
+//       payments.value[idx] = { ...editingPayment.value, ...paymentForm }
+//     }
+//   } else {
+//     payments.value.push({ id: nextPaymentId++, ...paymentForm })
+//   }
+//   closePaymentModal()
+// }
 
-function removePayment(id: number) {
-  payments.value = payments.value.filter((p) => p.id !== id)
-}
+// function removePayment(id: number) {
+//   payments.value = payments.value.filter((p) => p.id !== id)
+// }
 
-function closePaymentModal() {
-  showPaymentModal.value = false
-  editingPayment.value = null
-  paymentForm.bank = ''
-  paymentForm.accountNumber = ''
-  paymentForm.accountName = ''
-}
+// function closePaymentModal() {
+//   showPaymentModal.value = false
+//   editingPayment.value = null
+//   paymentForm.bank = ''
+//   paymentForm.accountNumber = ''
+//   paymentForm.accountName = ''
+// }
 </script>
 
 <style>

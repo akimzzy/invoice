@@ -50,13 +50,13 @@
         <div class="flex gap-2 justify-end mt-4">
           <button
             @click="closeCompanyModal"
-            class="text-[10px] rounded-lg px-2.5 py-1 bg-white/20 text-white hover:bg-white/40 cursor-pointer"
+            class="px-4 py-2 rounded-lg bg-white/5 text-white/70 hover:bg-white/20 transition-colors text-xs cursor-pointer"
           >
             Cancel
           </button>
           <button
             @click="saveCompany"
-            class="text-[10px] rounded-lg px-2.5 py-1 bg-white/40 text-white hover:bg-white/60 cursor-pointer"
+            class="px-4 py-2 rounded-lg bg-white/20 text-white font-semibold hover:bg-white/30 transition-colors text-xs cursor-pointer"
           >
             Save
           </button>

@@ -12,7 +12,7 @@
         <CompanyItem class="mt-4" v-if="company" :company="company">
           <button
             @click="updateInvoiceCompany(undefined)"
-            class="p-1 bg-red-600 rounded-lg px-2 cursor-pointer hover:bg-red-700"
+            class="p-1 border-gray-500/30 text-white hover:bg-white/10 border rounded-lg px-2 cursor-pointer"
           >
             Remove
           </button>
@@ -33,14 +33,17 @@
         <span class="font-semibold text-sm">Shareable Link</span>
       </div>
       <div class="text-white/60 text-[10px]">Readonly link to share with clients.</div>
-      <div class="flex items-center gap-4 mt-4">
-        <input
+      <div class="flex items-center gap-1 mt-4">
+        <div
           class="bg-white/5 border border-white/10 rounded-lg px-2 py-2 text-[10px] text-white flex-1"
-          :value="`/invoice/${invoice.id}`"
-          readonly
-        />
-        <button class="text-[10px] px-2 py-1 rounded bg-white/20 text-white hover:bg-white/40">
-          <IconClipboard class="size-4" />
+        >
+          {{ `/invoice/${invoice.id}` }}
+        </div>
+
+        <button
+          class="rounded-lg cursor-pointer hover:bg-white/10 px-2 py-2 text-[10px] text-white flex gap-1 items-center"
+        >
+          Copy <IconClipboard class="size-3" />
         </button>
       </div>
       <div class="flex items-center justify-between mt-6">
@@ -51,13 +54,10 @@
           }}</span>
         </div>
 
-        <label class="flex items-center gap-2 cursor-pointer">
-          <CustomToggle
-            :model-value="enableLiveUpdate"
-            size="18px"
-            @update:model-value="updateEnableLiveUpdate"
-          />
-        </label>
+        <CustomToggle
+          :model-value="enableLiveUpdate"
+          @update:model-value="updateEnableLiveUpdate"
+        />
       </div>
     </section>
     <!-- Payment Section -->
@@ -74,23 +74,9 @@
 
         <CustomToggle
           :model-value="enablePayment"
-          size="18px"
+          size="22px"
           @update:model-value="updateEnablePayment"
           :label="enablePayment ? 'Disable Payment' : 'Enable Payment'"
-        />
-      </div>
-      <div class="flex flex-col gap-2 mt-4">
-        <input
-          class="bg-white/5 border border-white/10 rounded-lg px-2 py-2 text-[10px] text-white"
-          placeholder="Bank Name"
-          v-model="invoice.paymentBank"
-          @change="updateInvoice(invoice.id, { paymentBank: invoice.paymentBank })"
-        />
-        <input
-          class="bg-white/5 border border-white/10 rounded-lg px-2 py-2 text-[10px] text-white"
-          placeholder="Account Number"
-          v-model="invoice.paymentAccount"
-          @change="updateInvoice(invoice.id, { paymentAccount: invoice.paymentAccount })"
         />
       </div>
     </section> -->
@@ -113,6 +99,7 @@ import { asyncComputed } from '@vueuse/core'
 import type { Invoice } from '@/db'
 import AllCompanies from './AllCompanies.vue'
 import CompanyItem from './CompanyItem.vue'
+import { updateInvoice } from '@/db/invoiceActions'
 
 const props = defineProps<{
   invoice: Invoice
@@ -128,7 +115,7 @@ const showSelectCompanyModal = ref(false)
 const enableLiveUpdate = ref<boolean>(props.invoice.enableLiveUpdate || false)
 function updateEnableLiveUpdate(value: boolean) {
   enableLiveUpdate.value = value
-  // updateInvoice(invoice.id, { realtimeShare: enableLiveUpdate.value })
+  updateInvoice(props.invoice.id, { enableLiveUpdate: value })
 }
 
 const company = asyncComputed(async () => {

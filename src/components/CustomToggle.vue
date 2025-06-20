@@ -34,7 +34,7 @@ const props = defineProps({
   label: { type: String, default: '' },
   colorOn: { type: String, default: '#22c55e' }, // green-500
   colorOff: { type: String, default: '#d1d5db' }, // gray-300
-  size: { type: String, default: '24px' },
+  size: { type: String, default: '22px' },
 })
 const emit = defineEmits(['update:modelValue'])
 const toggle = () => {

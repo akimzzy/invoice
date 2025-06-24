@@ -28,11 +28,15 @@ import { useRoute, useRouter } from 'vue-router'
 import type { Invoice, Client, InvoiceItem } from '@/db'
 import { updateInvoiceItems, deleteInvoice, updateInvoice } from '@/db/invoiceActions.ts'
 
+import { useNotification } from '@/composables/useNotification'
+
 const props = defineProps<{ invoice: Invoice; clients: Client[] }>()
 const emit = defineEmits(['close'])
 
 const route = useRoute()
 const router = useRouter()
+
+const { notify } = useNotification()
 
 const tabs = computed(() => [
   { label: 'Items', query: 'items', icon: IconList, total: props.invoice?.items?.length },
@@ -76,6 +80,7 @@ async function deleteMarkedItems() {
   if (!props.invoice) return
 
   let { items } = toRaw(props.invoice)
+  const deletedCount = markedItems.value.length
   items = items.filter(
     (_item: { description: string; quantity: number; rate: number }, idx: number) =>
       !markedItems.value.includes(idx),
@@ -88,17 +93,27 @@ async function deleteMarkedItems() {
   await updateInvoiceItems(props.invoice.id, items)
   markedItems.value = []
   selectMode.value = false
+  if (deletedCount > 0) {
+    notify({
+      message: `${deletedCount} item${deletedCount > 1 ? 's' : ''} deleted from invoice`,
+      type: 'success',
+    })
+  }
 }
+
+const focusLastItem = ref<boolean>(false)
 
 async function addInvoiceItem() {
   if (!props.invoice) return
 
   try {
     const { items } = toRaw(props.invoice)
+
     await updateInvoiceItems(props.invoice.id, [
       ...items,
       { description: '', quantity: 1, rate: 0 },
     ])
+    focusLastItem.value = true
   } catch (error) {
     console.log(error)
   }
@@ -112,6 +127,7 @@ async function handleDeleteInvoice() {
     emit('close')
   } catch (error) {
     console.log(error)
+    notify({ message: 'Failed to delete invoice', type: 'error' })
   }
 }
 
@@ -179,13 +195,18 @@ async function generatePDF() {
                 <button
                   v-for="tab in tabs"
                   :key="tab.label"
-                  class="text-[10px] py-1 px-2 rounded-b-lg cursor-pointer border border-t-0 flex"
+                  class="text-xs py-1 px-2 rounded-b-lg cursor-pointer border border-t-0 flex"
                   :class="
                     (invoiceTab || 'items') === tab.query
                       ? 'bg-white text-black border-transparent'
                       : 'text-white/60 bg-white/5 border-transparent'
                   "
-                  @click="router.push({ query: { ...route.query, 'invoice-tab': tab.query } })"
+                  @click="
+                    () => {
+                      focusLastItem = false
+                      router.push({ query: { ...route.query, 'invoice-tab': tab.query } })
+                    }
+                  "
                 >
                   <component v-if="tab.icon" :is="tab.icon" class="size-3 mr-2" />
                   {{ tab.label }}
@@ -256,23 +277,26 @@ async function generatePDF() {
                     :key="idx"
                     :item="item"
                     :hovered="editingIdx === idx"
+                    :focus-description="focusLastItem && idx + 1 === props.invoice?.items.length"
                     @update:item="(val) => handleItemUpdate(val, idx)"
                   />
                 </div>
               </li>
             </ul>
-            <button
-              class="text-[10px] p-3 bg- text-white/70 rounded-xl cursor-pointer w-full flex gap-2 justify-center items-center"
-              type="button"
-              @click="addInvoiceItem"
-              v-if="props.invoice && isItemsTab"
-            >
-              <IconPlus class="size-2" /> Add Item
-            </button>
+            <div class="flex justify-center">
+              <button
+                class="text-white cursor-pointer flex gap-2 justify-center items-center text-[10px] py-2 px-4 rounded-xl bg-white/5 border-transparent border"
+                type="button"
+                @click="addInvoiceItem"
+                v-if="props.invoice && isItemsTab"
+              >
+                <IconPlus class="size-2" /> Add Item
+              </button>
+            </div>
           </div>
           <div class="flex justify-between items-center mt-4" v-if="props.invoice && isItemsTab">
             <span class="text-xs text-white/70">Total</span>
-            <span class="text-lg font-bold text-white"
+            <span class="text-md font-bold text-white"
               >₦{{ props.invoice?.total?.toLocaleString() }}</span
             >
           </div>

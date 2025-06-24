@@ -1,5 +1,8 @@
+import { useNotification } from '@/composables/useNotification'
 import { db } from '.'
 import type { Invoice, InvoiceItem } from '.'
+
+const { notify } = useNotification()
 
 // Helper to generate a unique 4-digit code
 export async function generateUniqueInvoiceCode(): Promise<string> {
@@ -26,6 +29,7 @@ export async function fetchInvoice(id: string): Promise<Invoice | undefined> {
 // Update an invoice by ID
 export async function updateInvoice(id: string, updates: Partial<Invoice>): Promise<string> {
   const updated = await db.invoices.update(id, updates)
+  notify({ message: `Invoice updated successfully`, type: 'success' })
   return String(updated)
 }
 
@@ -38,6 +42,7 @@ export async function updateInvoiceItems(id: string, items: InvoiceItem[]): Prom
 // Delete an invoice by ID
 export async function deleteInvoice(id: string): Promise<void> {
   await db.invoices.delete(id)
+  notify({ message: `Invoice deleted successfully`, type: 'success' })
 }
 
 // Fetch all invoices

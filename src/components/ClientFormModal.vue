@@ -4,7 +4,18 @@
       <div
         class="sm:rounded-3xl bg-[#18181b] w-full h-full max-h-full flex flex-col justify-end py-10 relative border border-white/10 sm:w-2xl max-w-2xl sm:h-[50rem] sm:max-h-[90vh] overflow-hidden"
       >
-        <ClientFormInner :client="client" @close="$emit('close')" class="border-0 shadow-none" />
+        <button
+          class="absolute top-4 right-4 text-white/50 hover:text-white/60 text-2xl cursor-pointer p-4"
+          @click="$emit('close')"
+        >
+          <IconX class="size-4" />
+        </button>
+        <ClientFormInner
+          :hide-close-icon="true"
+          :client="client"
+          @close="$emit('close')"
+          class="border-0 shadow-none"
+        />
       </div>
     </transition>
   </div>
@@ -13,6 +24,7 @@
 <script setup lang="ts">
 import ClientFormInner from './ClientFormInner.vue'
 import type { Client } from '@/db'
+import IconX from './icons/IconX.vue'
 
 defineProps<{
   client?: Client | null

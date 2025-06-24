@@ -14,11 +14,11 @@
             <IconX class="size-5" />
           </button>
         </div>
-        <div class="flex flex-col gap-10 p-6 overflow-y-auto">
+        <div class="flex flex-col gap-10 p-6 overflow-y-auto flex-1">
           <!-- Account Section -->
           <section>
             <div class="font-semibold text-sm mb-0.5">Account Information</div>
-            <!-- <div class="text-white/60 text-[10px]">Basic details for your account.</div> -->
+
             <div class="flex gap-2 border-white/20 items-center mt-4">
               <div
                 class="flex flex-col items-center justify-center w-10 h-10 border border-white/20 rounded-full cursor-pointer bg-white/5 hover:bg-white/10 font-bold text-white/60 text-sm"
@@ -40,7 +40,7 @@
             </div>
           </section>
           <!-- Companies Section -->
-          <section>
+          <section class="">
             <div class="flex items-center justify-between mb-4">
               <span class="font-semibold text-sm">Companies</span>
               <button
@@ -50,9 +50,7 @@
                 Add Company
               </button>
             </div>
-            <!-- <div class="text-white/60 text-[10px] mb-4">
-              Manage your companies below. You can add, edit, or remove companies as needed.
-            </div> -->
+
             <div
               v-if="companies?.length === 0"
               class="text-white/40 text-xs py-8 flex flex-col items-center gap-2"

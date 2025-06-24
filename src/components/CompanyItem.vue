@@ -64,7 +64,7 @@
           class="sm:hidden"
           :options="[
             { label: 'Edit', value: 'edit', icon: IconPen },
-            { label: 'Delete', value: 'edit', icon: IconTrash },
+            { label: 'Delete', value: 'delete', icon: IconTrash },
           ]"
           @select="handleComapnyItemDropdodwn"
         >

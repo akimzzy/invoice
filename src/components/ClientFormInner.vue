@@ -3,6 +3,7 @@
     class="bg-[#18181b] rounded-3xl shadow-2xl w-full sm:w-2xl max-w-2xl p-6 py-8 relative border border-white/10"
   >
     <button
+      v-if="!hideCloseIcon"
       class="absolute top-4 right-4 text-white/50 hover:text-white/60 text-2xl cursor-pointer p-4"
       @click="$emit('close')"
     >
@@ -40,15 +41,7 @@
         </div>
       </div>
       <div class="flex justify-between mt-4">
-        <button
-          v-if="isEdit"
-          type="button"
-          class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors text-xs cursor-pointer"
-          @click="handleDelete"
-        >
-          Delete
-        </button>
-        <div v-else></div>
+        <div></div>
         <div class="flex gap-2">
           <button
             type="button"
@@ -65,6 +58,21 @@
           </button>
         </div>
       </div>
+      <div
+        v-if="isEdit"
+        class="flex flex-col items-center justify-center mt-4 p-8 bg-white/3 rounded-"
+      >
+        <button
+          type="button"
+          class="px-4 py-2 rounded-lg bg-white border border-white/10 text-black hover:bg-red-700 transition-colors text-xs cursor-pointer"
+          @click="handleDelete"
+        >
+          Delete client
+        </button>
+        <p class="text-[10px] text-center mt-4 text-white/60">
+          This action is permanent. The client will be deleted and unlinked from all invoices.
+        </p>
+      </div>
     </form>
   </div>
 </template>
@@ -77,6 +85,7 @@ import IconX from './icons/IconX.vue'
 
 const props = defineProps<{
   client?: Client | null
+  hideCloseIcon?: boolean
 }>()
 const emit = defineEmits<{
   close: []

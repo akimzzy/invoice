@@ -98,6 +98,7 @@ async function saveCompany() {
   } else {
     await createCompany(companyForm.value)
   }
+
   companyForm.value = { name: '', email: '', phone: '', logoUrl: '' }
   props.closeCompanyModal()
 }

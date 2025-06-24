@@ -5,7 +5,7 @@ import type { InvoiceItem } from '@/db'
 
 let debounceTimeout: ReturnType<typeof setTimeout> | null = null
 
-const props = defineProps<{ item: InvoiceItem; hovered?: boolean }>()
+const props = defineProps<{ item: InvoiceItem; hovered?: boolean; focusDescription?: boolean }>()
 const emit = defineEmits<{ 'update:item': [item: InvoiceItem] }>()
 
 const description = ref(props.item.description)
@@ -37,7 +37,7 @@ onMounted(() => {
   description.value = props.item.description
   quantity.value = props.item.quantity
   rate.value = props.item.rate
-  textareaRef.value?.focus()
+  if (props.focusDescription) textareaRef.value?.focus()
 })
 </script>
 

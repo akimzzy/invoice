@@ -12,7 +12,7 @@
         'w-5 h-5 flex items-center justify-center rounded-lg transition-all',
         modelValue ? 'bg-neutral-50' : 'bg-transparent',
         disabled ? 'opacity-40 cursor-not-allowed' : 'border border-neutral-700',
-        !modelValue && !disabled ? 'border-2 border-neutral-700' : '',
+        !modelValue && !disabled ? 'border-1 border-neutral-700' : '',
       ]"
     >
       <svg

@@ -1,7 +1,7 @@
 <template>
-  <div class="relative inline-block w-full text-xs" ref="dropdownRef">
+  <div class="relative inline-block w-full text-[10px]" ref="dropdownRef">
     <div
-      class="bg-white/5 text-white rounded-lg gap-3 min-w-52 px-4 py-2 cursor-pointer flex justify-between items-center select-none border border-white/20 hover:bg-white/20 transition-colors duration-200"
+      class="bg-white/5 text-white rounded-lg gap-3 min-w-52 p-2 cursor-pointer flex justify-between items-center select-none border border-white/20 hover:bg-white/20 transition-colors duration-200"
       @click="toggleDropdown"
       :aria-expanded="isOpen"
       tabindex="0"

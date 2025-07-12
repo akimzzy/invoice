@@ -9,6 +9,11 @@ const router = createRouter({
       name: 'home',
       component: HomeView,
     },
+    {
+      path: '/:readonlyInvoiceId',
+      name: 'readonly-invoice',
+      component: () => import('../views/ReadonlyInvoice.vue'),
+    },
   ],
 })
 

@@ -6,8 +6,8 @@
         :class="{ 'pointer-events-none': isLoading }"
       >
         <div class="p-8">
-          <h1 class="font-semibold text-2xl">Log in for cloud features</h1>
-          <p class="text-sm text-white/50 mt-2">
+          <h1 class="font-semibold text-xl">Log in for cloud features</h1>
+          <p class="text-xs text-white/50 mt-2">
             Sync invoices, manage companies, accept payments, and share links — all in one place.
           </p>
         </div>
@@ -16,7 +16,7 @@
         </div>
         <div v-else-if="props.observer?.type === 'email'">
           <form @submit.prevent="submitEmail" class="p-8 flex flex-col text-xs">
-            <h2 class="text-lg font-semibold text-white mb-2">Email</h2>
+            <h2 class="text-sm font-semibold text-white mb-2">Email</h2>
             <input
               v-model="email"
               type="email"
@@ -48,7 +48,7 @@
         </div>
         <div v-else-if="props.observer?.type === 'otp'">
           <form @submit.prevent="submitOtp" class="p-8 flex flex-col text-xs">
-            <h2 class="text-lg font-semibold text-white mb-2">Enter OTP</h2>
+            <h2 class="text-sm font-semibold text-white mb-2">Enter OTP</h2>
 
             <input
               v-model="otp"

@@ -6,10 +6,10 @@
         class="sm:rounded-3xl bg-[#18181b] w-full h-full max-h-full flex flex-col relative border border-white/10 sm:w-2xl max-w-2xl sm:h-[50rem] sm:max-h-[90vh] overflow-hidden"
       >
         <div class="flex justify-between items-center px-6 py-4 border-b border-white/10">
-          <span class="font-bold text-lg text-white">Account Settings</span>
+          <span class="font-bold text-sm text-white">Account Settings</span>
           <button
             @click="closeAccountModal"
-            class="text-white/60 hover:text-white text-xl cursor-pointer"
+            class="text-white/60 hover:text-white text-lg cursor-pointer"
           >
             <IconX class="size-5" />
           </button>
@@ -17,11 +17,11 @@
         <div class="flex flex-col gap-10 p-6 overflow-y-auto flex-1">
           <!-- Account Section -->
           <section>
-            <div class="font-semibold text-sm mb-0.5">Account Information</div>
+            <div class="font-semibold text-xs mb-0.5">Account Information</div>
 
             <div class="flex gap-2 border-white/20 items-center mt-4">
               <div
-                class="flex flex-col items-center justify-center w-10 h-10 border border-white/20 rounded-full cursor-pointer bg-white/5 hover:bg-white/10 font-bold text-white/60 text-sm"
+                class="flex flex-col items-center justify-center w-10 h-10 border border-white/20 rounded-full cursor-pointer bg-white/5 hover:bg-white/10 font-bold text-white/60 text-xs"
               >
                 {{ user?.email?.charAt(0).toUpperCase() }}
               </div>
@@ -42,7 +42,7 @@
           <!-- Companies Section -->
           <section class="">
             <div class="flex items-center justify-between mb-4">
-              <span class="font-semibold text-sm">Companies</span>
+              <span class="font-semibold text-xs">Companies</span>
               <button
                 @click="openAddCompany"
                 class="text-[10px] rounded-lg px-2.5 py-1 bg-white/20 text-white hover:bg-white/40 cursor-pointer"
@@ -106,7 +106,7 @@
           <!-- <section>
             <div>
               <div class="flex items-center justify-between mb-4">
-                <span class="font-semibold text-sm">Payment Accounts</span>
+                <span class="font-semibold text-xs">Payment Accounts</span>
                 <button
                   @click="openAddPayment"
                   class="text-[10px] rounded-lg px-2.5 py-1 bg-white/20 text-white hover:bg-white/40 cursor-pointer"

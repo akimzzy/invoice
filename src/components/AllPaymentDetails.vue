@@ -7,7 +7,7 @@
       <div
         class="bg-[#18181b] rounded-2xl shadow-xl w-full p-6 flex flex-col gap-4 pb-20 max-h-[80vh] overflow-y-auto"
       >
-        <div class="font-bold text-sm text-white mb-4">All Payment Details</div>
+        <div class="font-bold text-xs text-white mb-4">All Payment Details</div>
         <ul class="flex flex-col gap-4">
           <li v-for="payment in payments" :key="payment.id">
             <PaymentAccountItem

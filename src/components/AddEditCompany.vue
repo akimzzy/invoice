@@ -5,7 +5,7 @@
       class="absolute inset-0 z-70 flex items-end justify-center bg-black/60"
     >
       <div class="bg-[#18181b] rounded-2xl shadow-xl w-full p-6 flex flex-col gap-2 pb-20">
-        <div class="font-bold text-sm text-white mb-4">
+        <div class="font-bold text-xs text-white mb-4">
           {{ editingCompany ? 'Edit Company' : 'Add Company' }}
         </div>
         <div class="flex items-center gap-4">

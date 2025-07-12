@@ -3,7 +3,7 @@
     <!-- Company Details Section -->
     <section class="pb-8 pt-4">
       <div class="flex items-center justify-between mb-1">
-        <span class="font-semibold text-sm">Company Details</span>
+        <span class="font-semibold text-xs">Company Details</span>
       </div>
       <div class="text-white/60 text-[10px]">
         Your company details shown on shared or downloaded invoices.
@@ -30,7 +30,7 @@
     <!-- Shareable Link Section -->
     <section class="py-8">
       <div class="flex items-center justify-between mb-1">
-        <span class="font-semibold text-sm">Shareable Link</span>
+        <span class="font-semibold text-xs">Shareable Link</span>
       </div>
       <div class="text-white/60 text-[10px]">Readonly link to share with clients.</div>
       <div class="flex items-center gap-1 mt-4">
@@ -65,7 +65,7 @@
       <div class="flex justify-between items-start">
         <div>
           <div class="flex items-center justify-between mb-1">
-            <span class="font-semibold text-sm">Payment</span>
+            <span class="font-semibold text-xs">Payment</span>
           </div>
           <div class="text-white/60 text-[10px]">
             Provide your payment details here to receive payments from your client.

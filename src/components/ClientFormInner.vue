@@ -4,12 +4,12 @@
   >
     <button
       v-if="!hideCloseIcon"
-      class="absolute top-4 right-4 text-white/50 hover:text-white/60 text-2xl cursor-pointer p-4"
+      class="absolute top-4 right-4 text-white/50 hover:text-white/60 text-xl cursor-pointer p-4"
       @click="$emit('close')"
     >
       <IconX class="size-4" />
     </button>
-    <h2 class="text-lg font-semibold mb-6 text-white">
+    <h2 class="text-sm font-semibold mb-6 text-white">
       {{ isEdit ? 'Edit Client' : 'Add Client' }}
     </h2>
     <form @submit.prevent="handleSubmit" class="flex flex-col gap-4 text-xs">

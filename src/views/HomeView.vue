@@ -161,31 +161,29 @@ function handleUserDropdown(val: string) {
 </script>
 
 <template>
-  <main class="flex h-full py-6 px-2 sm:py-10 sm:px-6 mx-auto max-w-7xl container">
+  <main class="flex h-full py-6 px-2 sm:py-10 sm:px-6 mx-auto max-w-5xl container">
     <div class="h-full w-full flex flex-col overflow-hidden">
       <div class="mb-10 flex justify-between items-center">
         <div class="flex gap-2 items-center">
           <button
-            class="px-4 py-2 rounded-lg font-bold focus:outline-none text-xs cursor-pointer"
-            :class="
-              activeTab === 'invoices' ? 'bg-white/30 text-white' : 'bg-white/10 text-white/40'
-            "
+            class="px-3 py-2 rounded-lg focus:outline-none text-xs cursor-pointer"
+            :class="activeTab === 'invoices' ? 'bg-white text-black' : 'bg-white/10 text-white/40'"
             @click="changeTab('invoices')"
           >
             Invoices
-            <span class="font-extrabold text-white/50">
+            <span class="font-extrabold ml-1">
               {{ invoices?.length }}
             </span>
           </button>
           <button
-            class="px-4 py-2 rounded-lg focus:outline-none text-xs cursor-pointer font-bold"
+            class="px-3 py-2 rounded-lg focus:outline-none text-xs cursor-pointer"
             :class="
               activeTab === 'clients' ? 'bg-white/30 text-white' : 'bg-white/10 text-white/40'
             "
             @click="changeTab('clients')"
           >
             Clients
-            <span class="font-extrabold text-white/50">
+            <span class="font-extrabold ml-1">
               {{ clients?.length }}
             </span>
           </button>
@@ -225,7 +223,6 @@ function handleUserDropdown(val: string) {
         <div class="flex mb-4 justify-between items-center" v-if="invoices?.length">
           <div>
             <CustomDropdown
-              class="w-48"
               :options="[
                 { label: 'All Clients', value: 'all' },
                 ...(clients?.map((c) => ({ label: c.name, value: c.id })) ?? []),
@@ -241,7 +238,7 @@ function handleUserDropdown(val: string) {
 
           <button
             @click="addInvoice"
-            class="px-4 py-2 rounded-lg focus:outline-none text-xs cursor-pointer flex gap-2 bg-white/15 text-white border border-white/10 items-center"
+            class="p-2 rounded-lg focus:outline-none text-xs cursor-pointer flex gap-2 bg-white/15 text-white border border-white/10 items-center"
           >
             <IconPlus class="size-2" /> New Invoice
           </button>
@@ -269,7 +266,7 @@ function handleUserDropdown(val: string) {
               class="grid grid-cols-1 md:grid-cols-3 sm:grid-cols-2 gap-2 sm:gap-4 rounded-2xl pb-44"
             >
               <li
-                class="rounded-2xl flex cursor-pointer p-4 border bg-white/6 border-white/15 h-max"
+                class="rounded-xl flex cursor-pointer p-4 border bg-white/6 border-white/15 h-max"
                 v-for="invoice in filteredInvoices"
                 :key="invoice.id"
                 @click="openInvoiceModal(invoice.id)"
@@ -277,9 +274,9 @@ function handleUserDropdown(val: string) {
                 <div class="flex flex-col flex-1">
                   <div class="flex">
                     <div class="flex gap-3 items-center flex-1">
-                      <span class="text-sm text-white font-bold">Invoice #{{ invoice.code }} </span>
+                      <span class="text-xs text-white font-bold">Invoice #{{ invoice.code }} </span>
 
-                      <span class="text-xs text-white/30"
+                      <span class="text-[10px] text-white/30"
                         >{{ invoice.items.length }} item{{
                           invoice.items.length > 1 ? 's' : ''
                         }}</span
@@ -287,19 +284,19 @@ function handleUserDropdown(val: string) {
                     </div>
                     <div class="flex justify-between items-center flex-col">
                       <div class="flex items-center flex-col gap-2">
-                        <div class="text-sm text-white font-bold">
+                        <div class="text-xs text-white font-bold">
                           ₦{{ invoice.total.toLocaleString() }}
                         </div>
                       </div>
                     </div>
                   </div>
                   <div class="flex justify-between border-white/10 text-[10px] mt-2">
-                    <span v-if="invoice.issueDate" class="text-white/30 text-center">{{
-                      formatDate(invoice.issueDate, 'EEE, dd MMM yyyy')
-                    }}</span>
-                    <span class="text-white/30 text-center">{{
-                      clients?.find((c) => c.id === invoice.clientId)?.name || ''
-                    }}</span>
+                    <span v-if="invoice.issueDate" class="text-white/30 text-center">
+                      {{ formatDate(invoice.issueDate, 'EEE, dd MMM yyyy') }}
+                    </span>
+                    <span class="text-white/30 text-center">
+                      {{ clients?.find((c) => c.id === invoice.clientId)?.name || '' }}
+                    </span>
                   </div>
                 </div>
               </li>

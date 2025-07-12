@@ -5,7 +5,7 @@
         class="sm:rounded-3xl bg-[#18181b] w-full h-full max-h-full flex flex-col justify-end py-10 relative border border-white/10 sm:w-2xl max-w-2xl sm:h-[50rem] sm:max-h-[90vh] overflow-hidden"
       >
         <button
-          class="absolute top-4 right-4 text-white/50 hover:text-white/60 text-2xl cursor-pointer p-4"
+          class="absolute top-4 right-4 text-white/50 hover:text-white/60 text-xl cursor-pointer p-4"
           @click="$emit('close')"
         >
           <IconX class="size-4" />

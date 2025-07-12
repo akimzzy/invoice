@@ -175,7 +175,7 @@ async function generatePDF() {
           class="rounded-t-3xl text-white/30 border-b border-b-white/10 w-full bg-[#18181b] flex items-center justify-between"
         >
           <div class="flex p-4 items-center gap-2">
-            <div class="text-lg font-semibold text-white">Invoice #{{ props.invoice?.code }}</div>
+            <div class="text-sm font-semibold text-white">Invoice #{{ props.invoice?.code }}</div>
             <span class="text-[10px]">
               {{ formatDate(props.invoice?.issueDate, 'EEE, dd MMM yyyy | HH:mm') }}
             </span>
@@ -195,7 +195,7 @@ async function generatePDF() {
                 <button
                   v-for="tab in tabs"
                   :key="tab.label"
-                  class="text-xs py-1 px-2 rounded-b-lg cursor-pointer border border-t-0 flex"
+                  class="text-[10px] py-1 px-2 rounded-b-lg cursor-pointer border border-t-0 flex"
                   :class="
                     (invoiceTab || 'items') === tab.query
                       ? 'bg-white text-black border-transparent'
@@ -208,7 +208,7 @@ async function generatePDF() {
                     }
                   "
                 >
-                  <component v-if="tab.icon" :is="tab.icon" class="size-3 mr-2" />
+                  <component v-if="tab.icon" :is="tab.icon" class="size-3 mr-1.5" />
                   {{ tab.label }}
                   <span class="font-black ml-2" v-if="tab.total">{{ tab.total }}</span>
                 </button>
@@ -394,7 +394,7 @@ async function generatePDF() {
             >
               <div class="flex justify-end mb-4">
                 <button
-                  class="text-white/50 hover:text-white/60 text-2xl cursor-pointer p-2 size-8"
+                  class="text-white/50 hover:text-white/60 text-xl cursor-pointer p-2 size-8"
                   @click="showMobileActions = false"
                 >
                   <IconX class="size-full" />

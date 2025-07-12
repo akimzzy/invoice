@@ -18,7 +18,7 @@ function dismissNotification() {
 
 <template>
   <div
-    class="relative min-h-screen bg-gradient-to-b from-black to-[#4b7378]/50 text-white font-mono px-2 sm:px-0"
+    class="relative min-h-screen bg-gradient-to-b from-black to-[#4b7378]/50 text-white px-2 sm:px-0"
   >
     <NotificationPopup
       v-if="showNotification"

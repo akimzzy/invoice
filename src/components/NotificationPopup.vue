@@ -3,7 +3,7 @@
     <div
       v-if="visible"
       :class="[
-        'fixed top-6 left-1/2 -translate-x-1/2 min-w-[280px] max-w-[90vw] z-[9999] rounded-2xl flex items-center px-4 py-2 gap-4 text-[10px] font-medium transition-all duration-350',
+        'fixed bottom-6 right-6  min-w-[280px] max-w-[90vw] z-[9999] rounded-xl flex items-center px-4 py-2 gap-4 text-[10px] font-medium transition-all duration-350',
         typeClass,
       ]"
     >
@@ -14,7 +14,7 @@
         </div>
       </div>
       <button
-        class="ml-2 bg-transparent border-none text-gray-400 text-xl cursor-pointer"
+        class="ml-2 bg-transparent border-none text-gray-400 text-lg cursor-pointer"
         @click="dismiss"
       >
         &times;

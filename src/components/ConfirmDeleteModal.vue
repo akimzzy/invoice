@@ -4,7 +4,7 @@
     class="fixed inset-0 z-60 flex items-center justify-center bg-black/60 text-xs"
   >
     <div class="bg-[#18181b] rounded-2xl p-8 shadow-2xl flex flex-col items-center">
-      <div class="text-white text-lg font-semibold mb-4">Confirm Deletion</div>
+      <div class="text-white text-sm font-semibold mb-4">Confirm Deletion</div>
       <div class="text-white/70 mb-6">
         Are you sure you want to delete this invoice? This action cannot be undone.
       </div>

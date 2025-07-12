@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col items-center justify-center py-16 text-center">
-    <div class="text-2xl font-semibold text-white/70 mb-2">
+    <div class="text-xl font-semibold text-white/70 mb-2">
       <slot name="icon"> </slot>
       {{ message }}
     </div>

@@ -1,51 +1,43 @@
 # Invoice App
 
-A modern invoicing app built with Vue 3 and Vite, featuring advanced invoice management, PDF/JPG export, cloud sync, and more.
+A Vue 3 invoicing app for creating invoices, managing client details, exporting invoices, and syncing data to the cloud.
 
-## 🚀 Usage Instructions
+## What it includes
 
-- **Creating Invoices**: Click the "+" button on the dashboard to open the invoice modal. Fill in client details, items, and totals.
-- **Exporting**: In the invoice modal, use the download buttons to export as PDF or JPG.
-- **Managing Clients**: Navigate to the Clients tab to add or edit client information.
-- **Cloud Sync**: Use the settings dropdown (gear icon) to migrate or sync your data with the cloud.
-- **Authentication**: Click "Login" to access your account and enable cloud features.
+- Create and manage invoices with client and line-item details
+- Export invoices as PDF or JPG
+- Add and edit client records
+- Sign in to use cloud features and sync data
 
-Screenshots and detailed usage examples coming soon!
+## Built with
 
----
+Vue 3, TypeScript, Vite, Dexie, and Dexie Cloud.
 
-## Recommended IDE Setup
+## Run locally
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+### Requirements
 
-## Type Support for `.vue` Imports in TS
+- Node.js
+- npm
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
+### Install dependencies
 
 ```sh
+git clone https://github.com/akimzzy/invoice.git
+cd invoice
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+### Start the development server
 
 ```sh
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+### Type-check and build
 
 ```sh
 npm run build
 ```
 
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+The production build is generated in `dist/`.
